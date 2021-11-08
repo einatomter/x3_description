@@ -8,8 +8,12 @@ project(rov_hil)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
+  controller_manager
+  gazebo_ros
+  joint_state_publisher
+  robot_state_publisher
   rospy
-  std_msgs
+  rviz
 )
 
 ## System dependencies are found with CMake's conventions
