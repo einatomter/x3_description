@@ -1,8 +1,0 @@
-prefix=/home/einar/Desktop/ROS_projects/Masters-project/catkin_ws/devel/.private/rov_hil
-
-Name: rov_hil
-Description: Description of rov_hil
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 

@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<robot name="x3_rov" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- includes -->
+    <xacro:include filename="$(find rov_hil)/urdf/materials.xacro" />
+
+    <!-- properties -->
+    <xacro:property name="x3_length" value="0.485" />
+    <xacro:property name="x3_width" value="0.257" />
+    <xacro:property name="x3_height" value="0.354" />
+
+    <!-- macros -->
+    <xacro:macro name="link_fin" params="suffix rad len">
+        <link name="Lfin_${suffix}">
+            <collision>
+                <origin rpy="0 ${pi/2} 0" xyz="0 0 0"/>
+                <geometry>
+                    <cylinder radius="${rad}" length="${len}"/>
+                </geometry>
+            </collision>
+
+            <visual>
+                <origin rpy="0 ${pi/2} 0" xyz="0 0 0"/>
+                <geometry>
+                    <cylinder radius="${rad}" length="${len}"/>
+                </geometry>
+                <material name="black"/>
+            </visual>
+        </link>
+    </xacro:macro>
+
+    <xacro:macro name="joint_fin" params="suffix origin_xyz">
+        <joint name="Jfin_${suffix}" type="fixed">
+            <parent link="L1"/>
+            <child link="Lfin_${suffix}"/>
+            <origin xyz="${origin_xyz}" rpy="0 0 0"/>
+            <axis xyz="0 0 0"/>
+	    </joint>
+    </xacro:macro>
+
+	<!-- * * * Link Definitions * * * -->
+    <link name="L1">
+        <collision>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <box size="${x3_length} ${x3_width} ${x3_height}"/>
+            </geometry>
+        </collision>
+
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <box size="${x3_length} ${x3_width} ${x3_height}"/>
+                <!-- <mesh filename="package://my_cobot/models/joint1.dae"/> -->
+            </geometry>
+            <material name="grey_transparent"/>
+        </visual>
+	</link>
+
+    <link name="L2">
+        <collision>
+            <!-- <origin rpy="0 0 0" xyz="${x3_length*((1-3/8)*(5/8)/2)} 0 0"/> -->
+            <origin rpy="0 0 0" xyz="${x3_length * 3/16} 0 0"/>
+            <geometry>
+                <box size="${x3_length*5/8} ${x3_width * 3/4} ${x3_height}"/>
+            </geometry>
+        </collision>
+
+        <visual>
+            <origin rpy="0 0 0" xyz="${x3_length * 3/16} 0 0"/>
+            <geometry>
+                <box size="${x3_length*5/8} ${x3_width * 3/5} ${x3_height}"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
+	</link>
+
+    <joint name="J1" type="fixed">
+    	<parent link="L1"/>
+    	<child link="L2"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <axis xyz="0 0 0"/>
+	</joint>
+
+    <xacro:link_fin suffix="top" rad="${x3_height * 2/10}" len="${x3_length}"/>
+    <xacro:joint_fin suffix="top" origin_xyz="0 0 ${x3_height*(1/2 - 2/10)}"/>
+
+    <xacro:link_fin suffix="bot" rad="${x3_height * 2/10}" len="${x3_length}"/>
+    <xacro:joint_fin suffix="bot" origin_xyz="0 0 ${-x3_height*(1/2 - 2/10)}"/>
+
+</robot>

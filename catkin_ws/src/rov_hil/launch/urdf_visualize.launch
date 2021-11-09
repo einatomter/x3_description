@@ -1,15 +1,9 @@
 <launch>
 
-  <!-- USE: roslaunch robot_mira urdf_visualize.launch model:='$(find myrobot_package)/urdf/myrobot.urdf' -->
+  
   <arg name="model" default=""/>
 
-
-  <param name="robot_description" command="cat '$(find rov_hil)/urdf/x3_v1.urdf'" />
-
-  <!-- send fake joint values
-  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
-    <param name="use_gui" value="TRUE"/>
-  </node> -->
+  <param name="robot_description" command="$(find xacro)/xacro '$(find rov_hil)/urdf/x3_v1.xacro'" />
 
   <!-- Launch GUI for changing joint values -->
     <node pkg="joint_state_publisher_gui" type="joint_state_publisher_gui"

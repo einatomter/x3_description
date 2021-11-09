@@ -7,6 +7,10 @@ Panels:
         - /Global Options1
         - /Status1
         - /TF1
+        - /TF1/Tree1
+        - /TF1/Tree1/L11
+        - /RobotModel1
+        - /RobotModel1/Links1
       Splitter Ratio: 0.5
     Tree Height: 549
   - Class: rviz/Selection
@@ -58,35 +62,20 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
-        L1_link:
+        L1:
           Value: true
-        L2_link:
-          Value: true
-        L3_link:
-          Value: true
-        L4_link:
-          Value: true
-        L5_link:
-          Value: true
-        L6_link:
-          Value: true
-        L7_link:
+        L2:
           Value: true
       Marker Alpha: 1
-      Marker Scale: 0.20000000298023224
+      Marker Scale: 1
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: true
       Tree:
-        L1_link:
-          L2_link:
-            L3_link:
-              L4_link:
-                L5_link:
-                  L6_link:
-                    L7_link:
-                      {}
+        L1:
+          L2:
+            {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -98,37 +87,12 @@ Visualization Manager:
         Expand Joint Details: false
         Expand Link Details: false
         Expand Tree: false
-        L1_link:
+        L1:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        L2_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        L3_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        L4_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        L5_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        L6_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        L7_link:
+        L2:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -144,7 +108,7 @@ Visualization Manager:
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: L1_link
+    Fixed Frame: L1
     Frame Rate: 30
   Name: root
   Tools:
@@ -168,7 +132,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 0.819890022277832
+      Distance: 1.1835477352142334
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -176,17 +140,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: -0.13716307282447815
-        Y: -0.009443065151572227
-        Z: 0.14213697612285614
+        X: 0.0350201316177845
+        Y: -0.07603416591882706
+        Z: -0.05229419097304344
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.525398313999176
+      Pitch: 0.4853983521461487
       Target Frame: <Fixed Frame>
-      Yaw: 0.3253982365131378
+      Yaw: 1.4253976345062256
     Saved: ~
 Window Geometry:
   Displays:
@@ -205,4 +169,4 @@ Window Geometry:
     collapsed: false
   Width: 1267
   X: 930
-  Y: 160
+  Y: 123
