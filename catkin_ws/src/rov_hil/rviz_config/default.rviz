@@ -8,7 +8,6 @@ Panels:
         - /Status1
         - /TF1
         - /TF1/Tree1
-        - /TF1/Tree1/L11
         - /RobotModel1
         - /RobotModel1/Links1
       Splitter Ratio: 0.5
@@ -62,20 +61,41 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
-        L1:
+        Lfin_bot:
           Value: true
-        L2:
+        Lfin_top:
+          Value: true
+        Lhitbox:
+          Value: true
+        Lmain:
+          Value: true
+        Lprop_body_left:
+          Value: true
+        Lprop_body_right:
+          Value: true
+        Lprop_conn_left:
+          Value: true
+        Lprop_conn_right:
           Value: true
       Marker Alpha: 1
-      Marker Scale: 1
+      Marker Scale: 0.5
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: true
       Tree:
-        L1:
-          L2:
-            {}
+        Lhitbox:
+          Lmain:
+            Lfin_bot:
+              {}
+            Lfin_top:
+              {}
+            Lprop_conn_left:
+              Lprop_body_left:
+                {}
+            Lprop_conn_right:
+              Lprop_body_right:
+                {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -87,17 +107,47 @@ Visualization Manager:
         Expand Joint Details: false
         Expand Link Details: false
         Expand Tree: false
-        L1:
+        Lfin_bot:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        L2:
+        Lfin_top:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        Lhitbox:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
         Link Tree Style: Links in Alphabetic Order
+        Lmain:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        Lprop_body_left:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        Lprop_body_right:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        Lprop_conn_left:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        Lprop_conn_right:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
       Name: RobotModel
       Robot Description: robot_description
       TF Prefix: ""
@@ -108,7 +158,7 @@ Visualization Manager:
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: L1
+    Fixed Frame: Lmain
     Frame Rate: 30
   Name: root
   Tools:
@@ -140,17 +190,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 0.0350201316177845
-        Y: -0.07603416591882706
-        Z: -0.05229419097304344
+        X: -0.07640530914068222
+        Y: -0.06927409023046494
+        Z: 0.007530227303504944
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.4853983521461487
+      Pitch: 0.36039847135543823
       Target Frame: <Fixed Frame>
-      Yaw: 1.4253976345062256
+      Yaw: 1.3003977537155151
     Saved: ~
 Window Geometry:
   Displays:
@@ -169,4 +219,4 @@ Window Geometry:
     collapsed: false
   Width: 1267
   X: 930
-  Y: 123
+  Y: 86
