@@ -7,7 +7,7 @@
     <arg name="z" default="0.0" />
 
     <arg name="urdf_robot_file" default="" />
-    <arg name="robot_name" default="" />
+    <arg name="robot_name" default="x3_rov" />
 
     <!-- This Version was created due to some errors seen in the V1 that crashed GAzebo or went too slow in spawn -->
     <!-- Load the URDF into the ROS Parameter Server -->

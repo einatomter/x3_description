@@ -65,8 +65,6 @@ Visualization Manager:
           Value: true
         Lfin_top:
           Value: true
-        Lhitbox:
-          Value: true
         Lmain:
           Value: true
         Lprop_body_left:
@@ -77,30 +75,29 @@ Visualization Manager:
           Value: true
         Lprop_conn_right:
           Value: true
-      Marker Alpha: 1
-      Marker Scale: 0.5
+      Marker Alpha: 0.5
+      Marker Scale: 0.20000000298023224
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: true
       Tree:
-        Lhitbox:
-          Lmain:
-            Lfin_bot:
+        Lmain:
+          Lfin_bot:
+            {}
+          Lfin_top:
+            {}
+          Lprop_conn_left:
+            Lprop_body_left:
               {}
-            Lfin_top:
+          Lprop_conn_right:
+            Lprop_body_right:
               {}
-            Lprop_conn_left:
-              Lprop_body_left:
-                {}
-            Lprop_conn_right:
-              Lprop_body_right:
-                {}
       Update Interval: 0
       Value: true
-    - Alpha: 1
+    - Alpha: 0.5
       Class: rviz/RobotModel
-      Collision Enabled: false
+      Collision Enabled: true
       Enabled: true
       Links:
         All Links Enabled: true
@@ -113,11 +110,6 @@ Visualization Manager:
           Show Trail: false
           Value: true
         Lfin_top:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        Lhitbox:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -182,7 +174,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 1.1835477352142334
+      Distance: 1.0849006175994873
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -190,17 +182,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: -0.07640530914068222
-        Y: -0.06927409023046494
-        Z: 0.007530227303504944
+        X: -0.053355470299720764
+        Y: -0.01955772563815117
+        Z: 0.10061952471733093
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.36039847135543823
+      Pitch: 0.14039844274520874
       Target Frame: <Fixed Frame>
-      Yaw: 1.3003977537155151
+      Yaw: 0.9604007601737976
     Saved: ~
 Window Geometry:
   Displays:
@@ -219,4 +211,4 @@ Window Geometry:
     collapsed: false
   Width: 1267
   X: 930
-  Y: 86
+  Y: 49
