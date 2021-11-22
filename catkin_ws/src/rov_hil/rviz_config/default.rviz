@@ -61,19 +61,27 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
-        Lfin_bot:
+        x3_rov/base_link:
           Value: true
-        Lfin_top:
+        x3_rov/fin_bot_link:
           Value: true
-        Lmain:
+        x3_rov/fin_top_link:
           Value: true
-        Lprop_body_left:
+        x3_rov/prop_body_left_link:
           Value: true
-        Lprop_body_right:
+        x3_rov/prop_body_right_link:
           Value: true
-        Lprop_conn_left:
+        x3_rov/prop_conn_left_link:
           Value: true
-        Lprop_conn_right:
+        x3_rov/prop_conn_right_link:
+          Value: true
+        x3_rov/thruster_0:
+          Value: true
+        x3_rov/thruster_1:
+          Value: true
+        x3_rov/thruster_2:
+          Value: true
+        x3_rov/x3_rov_link:
           Value: true
       Marker Alpha: 0.5
       Marker Scale: 0.20000000298023224
@@ -82,60 +90,87 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        Lmain:
-          Lfin_bot:
+        x3_rov/base_link:
+          x3_rov/fin_bot_link:
             {}
-          Lfin_top:
+          x3_rov/fin_top_link:
             {}
-          Lprop_conn_left:
-            Lprop_body_left:
+          x3_rov/prop_conn_left_link:
+            x3_rov/prop_body_left_link:
               {}
-          Lprop_conn_right:
-            Lprop_body_right:
+          x3_rov/prop_conn_right_link:
+            x3_rov/prop_body_right_link:
               {}
+          x3_rov/thruster_0:
+            {}
+          x3_rov/thruster_1:
+            {}
+          x3_rov/thruster_2:
+            {}
+          x3_rov/x3_rov_link:
+            {}
       Update Interval: 0
       Value: true
     - Alpha: 0.5
       Class: rviz/RobotModel
-      Collision Enabled: true
+      Collision Enabled: false
       Enabled: true
       Links:
         All Links Enabled: true
         Expand Joint Details: false
         Expand Link Details: false
         Expand Tree: false
-        Lfin_bot:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        Lfin_top:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
         Link Tree Style: Links in Alphabetic Order
-        Lmain:
+        x3_rov/base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        x3_rov/fin_bot_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        Lprop_body_left:
+        x3_rov/fin_top_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        Lprop_body_right:
+        x3_rov/prop_body_left_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        Lprop_conn_left:
+        x3_rov/prop_body_right_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        Lprop_conn_right:
+        x3_rov/prop_conn_left_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        x3_rov/prop_conn_right_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        x3_rov/thruster_0:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        x3_rov/thruster_1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        x3_rov/thruster_2:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        x3_rov/x3_rov_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -150,7 +185,7 @@ Visualization Manager:
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: Lmain
+    Fixed Frame: x3_rov/base_link
     Frame Rate: 30
   Name: root
   Tools:
@@ -174,7 +209,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 1.0849006175994873
+      Distance: 0.503832221031189
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -182,17 +217,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: -0.053355470299720764
-        Y: -0.01955772563815117
-        Z: 0.10061952471733093
+        X: 0.044122736901044846
+        Y: -0.0045593176037073135
+        Z: 0.040659792721271515
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.14039844274520874
+      Pitch: -0.049601878970861435
       Target Frame: <Fixed Frame>
-      Yaw: 0.9604007601737976
+      Yaw: 1.4504237174987793
     Saved: ~
 Window Geometry:
   Displays:
@@ -210,5 +245,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1267
-  X: 930
-  Y: 49
+  X: 1149
+  Y: 27

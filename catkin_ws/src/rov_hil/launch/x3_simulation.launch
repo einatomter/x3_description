@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="paused" default="false"/>
+    <arg name="rjp_set" default="true"/>
+    <arg name="rsp_set" default="true"/>
+    <arg name="rviz_conf" default="camera.rviz"/>
+    <arg name="urdf_file" default="x3_v2.xacro"/>
+
+    <!-- gazebo launch file -->
+    <include file="$(find rov_hil)/launch/x3_gazebo.launch">
+        <arg name="paused" value="$(arg paused)"/>
+        <arg name="urdf_file" value="$(arg urdf_file)"/>
+    </include>
+
+    <!-- rviz launch file -->
+    <include file="$(find rov_hil)/launch/x3_rviz.launch">
+        <arg name="rjp_set" value="$(arg rjp_set)"/>
+        <arg name="rsp_set" value="$(arg rsp_set)"/>
+        <arg name="rviz_conf" value="$(arg rviz_conf)"/>
+        <arg name="urdf_file" value="$(arg urdf_file)"/>
+    </include>
+</launch>

@@ -2,100 +2,150 @@
 <robot name="x3_rov" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
 	<!-- includes -->
-	<xacro:include filename="$(find rov_hil)/urdf/materials.xacro" />
-	<xacro:include filename="$(find rov_hil)/urdf/macros.xacro" />
+	<!-- "Dummy" base link to eliminate root link inertia warning --> 
+  <link name="$(arg namespace)/dummy_link"/>
 
-	<!-- properties/variables -->
-	<xacro:property name="x3_length" value="0.485" />	<!-- m  -->
-	<xacro:property name="x3_width"  value="0.257" /> <!-- m  -->
-	<xacro:property name="x3_height" value="0.354" /> <!-- m  -->
+ <!-- base_link according to ROS conventions: x forward, z up -->
+ <link name="$(arg namespace)/base_link">
+   <inertial>
+     <mass value="1862.87"/>
+     <origin xyz="0 0 0"/>
+     <inertia ixx="52.39" ixy="1.44" ixz="33.41" iyy="79.20" iyz="2.6" izz="69.23"/>
+   </inertial>
+   <visual>
+     <origin xyz="0 0 0" rpy="0 0 1.5708"/>
+     <geometry>
+       <mesh filename="package://smilodon_description/meshes/smilodon_nologo_visual.dae" scale="1 1 1"/>
+     </geometry>
+   </visual>
+   <collision>
+     <origin xyz="0 0 0" rpy="0 0 1.5708"/>
+     <geometry>
+       <mesh filename="package://smilodon_description/meshes/smilodon_collision.dae" scale="1 1 1"/>
+     </geometry>
+   </collision>
+ </link>
 
-	<xacro:property name="x3_mass"   value="9" />     <!-- kg -->
-	<!-- calculations are based roughly on volume distribution -->
-	<xacro:property name="x3_m_main" value="${x3_mass * 0.66}" />
-	<xacro:property name="x3_m_fin"  value="${x3_mass * 0.14}" />
-	<xacro:property name="x3_m_prop" value="${x3_mass * 0.03}" />
+   <joint name="$(arg namespace)/base_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>  <!-- X-fwd, Y-lft, Z-up (ick!) -->
+    <parent link="$(arg namespace)/dummy_link"/>
+    <child link="$(arg namespace)/base_link"/>
+  </joint>
+ 
+ <gazebo>
+   <plugin name="uuv_plugin" filename="libuuv_underwater_object_ros_plugin.so">
+     <!-- Hydro parameters for the vehicle-->
+     <fluid_density>1028.0</fluid_density>
+     <flow_velocity_topic>hydrodynamics/current_velocity</flow_velocity_topic>
+     <debug>$(arg debug)</debug>
 
+     <link name="$(arg namespace)/base_link">
+       <neutrally_buoyant>1</neutrally_buoyant>
+       <!-- Volume, see p.31 in Berg2012 -->
+       <volume>1.8382</volume>
+       <box>
+         <width>1.5</width>
+         <length>2.6</length>
+         <height>1.6</height>
+       </box>
+       <!--
+	   Center of buoyancy according to eq. (3.1) p. 28 in Berg2012.
+	   The original values, [0.0822, -0.00773, 0.3872] however, seem to
+	   assume NWU (otherwise cob is below cog?).
+       -->
+       <center_of_buoyancy>0.0 0.0 0.3</center_of_buoyancy>
+       <hydrodynamic_model>
+         <type>fossen</type>
+         <!-- Added mass: see p.28 in Berg2012 -->
+         <added_mass>
+           779.79 -6.8773 -103.32  8.5426 -165.54 -7.8033
+           -6.8773    1222   51.29  409.44 -5.8488  62.726
+           -103.32   51.29  3659.9  6.1112 -386.42  10.774
+           8.5426  409.44  6.1112   534.9 -10.027  21.019
+           -165.54 -5.8488 -386.42 -10.027  842.69 -1.1162
+           -7.8033  62.726  10.775  21.019 -1.1162  224.32
+         </added_mass>
+         <!-- Linear damping: see p.31 in Berg2012 -->
+         <linear_damping>
+           -74.82 -69.48 -728.4 -268.8 -309.77 -105
+         </linear_damping>
+         <!-- Non-linear damping: see p.30 in Berg2012 -->
+         <quadratic_damping>
+           -748.22 -992.53 -1821.01 -672 -774.44 -523.27
+         </quadratic_damping>
+       </hydrodynamic_model>
+     </link>
+   </plugin>
+ </gazebo>
+ 
+ <gazebo>
+   <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+     <robotNamespace>/$(arg namespace)</robotNamespace>
+     <robotParam>/$(arg namespace)/robot_description</robotParam>
+   </plugin>
+ </gazebo>
 
-	<!-- * * * Link Definitions * * * -->
+ <!-- Define thrusters for propulsion -->
+ <xacro:property name="prop_mesh_file" value="file://$(find uuv_descriptions)/meshes/prop.dae"/>
+ <!-- Common values, colors, converstion, standard shapes/inertia etc.
+      Dependency for the thruster_snippets.xacro-->
+ <xacro:include filename="$(find uuv_descriptions)/urdf/common.urdf.xacro"/>
+ <!-- Various thruster models -->
+ <xacro:include filename="$(find uuv_gazebo_ros_plugins)/urdf/thruster_snippets.xacro"/>
+ <xacro:property name="prop_mesh_file" value="file://$(find uuv_descriptions)/meshes/prop.dae"/>
+ <!-- Thruster joint and link snippet
+      Wrapper for the the thruster_module_first_order_basic_fcn_macro
+      defined in uuv_gazebo_ros_plugins/urdf/thruster_snippet.
+      Uses the "thruster_cf_basic_macro"
+        1) Basic curve
+	Input: x
+	Output: thrust
+	Function: thrust = rotorConstant * x * abs(x)
+ -->
+ <xacro:macro name="thruster_macro"
+	      params="thruster_id *origin">
+   <xacro:thruster_module_first_order_basic_fcn_macro
+       namespace="$(arg namespace)"
+       thruster_id="${thruster_id}"
+       mesh_filename="${prop_mesh_file}"
+       dyn_time_constant="0.05"
+       rotor_constant="0.00031">
+     <xacro:insert_block name="origin"/>
+   </xacro:thruster_module_first_order_basic_fcn_macro>
+ </xacro:macro>
 
-	<!-- Dummy link to suppress warnings about root link inertia -->
-	<link name="dummy">
-	</link>
+ <!-- Port-Aft -->
+ <xacro:thruster_macro thruster_id="0">
+   <origin xyz="-3.3 0.8 -0.1" rpy="${0*d2r} ${0*d2r} ${200.0*d2r}"/>
+ </xacro:thruster_macro>
+ <!-- Stbd-Aft -->
+ <xacro:thruster_macro thruster_id="1">
+   <origin xyz="-3.3 -0.8 -0.1" rpy="${0*d2r} ${0*d2r} ${160.0*d2r}"/>
+ </xacro:thruster_macro>
+ <!-- Port-Vert -->
+ <xacro:thruster_macro thruster_id="2">
+   <origin xyz="1.8 0.8 0.4" rpy="${0*d2r} ${-110.0*d2r} ${90.0*d2r}"/>
+ </xacro:thruster_macro>
+  <!-- Stbd-Vert -->
+ <xacro:thruster_macro thruster_id="3">
+   <origin xyz="1.8 -0.8 0.4" rpy="${0*d2r} ${-110*d2r} ${-90.0*d2r}"/>
+ </xacro:thruster_macro>
+  <!-- Port-Lat -->
+ <xacro:thruster_macro thruster_id="4">
+   <origin xyz="1.8 1.3 -0.07" rpy="${0*d2r} ${0*d2r} ${90.0*d2r}"/>
+ </xacro:thruster_macro>
+   <!-- Stbd-Lat -->
+ <xacro:thruster_macro thruster_id="5">
+   <origin xyz="1.8 -1.3 -0.07" rpy="${0*d2r} ${0*d2r} ${-90.0*d2r}"/>
+ </xacro:thruster_macro>
 
-	<link name="Lmain">
-
-		<xacro:cuboid_inertial 
-			mass="${x3_m_main}" 
-			length="${x3_length}" 
-			width="${x3_width}" 
-			height="${x3_height}"
-		>
-			<origin xyz="${x3_length * 3/16} 0 0" rpy="0 0 0"/>
-		</xacro:cuboid_inertial>
-
-		<collision>
-			<origin xyz="${x3_length * 3/16} 0 0" rpy="0 0 0"/>
-			<geometry>
-				<box size="${x3_length*5/8} ${x3_width * 3/5} ${x3_height}"/>
-			</geometry>
-		</collision>
-
-		<visual>
-			<!-- <origin rpy="0 0 0" xyz="${x3_length * 3/16} 0 0"/> -->
-			<origin xyz="0 0 0" rpy="0 0 0"/>
-			<geometry>
-				<!-- <box size="${x3_length*5/8} ${x3_width * 3/5} ${x3_height}"/> -->
-				<mesh filename="package://rov_hil/models/x3_low_poly_smoothed.dae"/>
-			</geometry>
-			<material name="grey_transparent"/>
-		</visual>
-	</link>
-
-
-	<joint name="dummy_joint" type="fixed">
-		<parent link="dummy"/>
-		<child link="Lmain"/>
-	</joint>
-
-
-	<!-- top fin -->
-	<xacro:fin
-		suffix="top"
-		parent_link="Lmain"
-		origin_xyz="0 0 ${x3_height*(1/2 - 1/6)}"
-		mass="${x3_m_fin}"
-		radius="${x3_height * 1/6}"
-		length="${x3_length/2}"
-	/>
-	<!-- bottom fin -->
-	<xacro:fin
-		suffix="bot"
-		parent_link="Lmain"
-		origin_xyz="0 0 ${-x3_height*(1/2 - 1/6)}"
-		mass="${x3_m_fin}"
-		radius="${x3_height * 1/6}"
-		length="${x3_length/2}"
-	/>
-	<!-- left propeller -->
-	<xacro:prop
-		suffix="left"
-		parent_link="Lmain"
-		origin_xyz="0 ${x3_width * 3/10} 0"
-		mass="${x3_m_prop}"
-		radius="${x3_height * 1/8}"
-		length="${x3_length * 1/3}"
-		mirror="1"
-	/>
-	<!-- right propeller -->
-	<xacro:prop
-		suffix="right"
-		parent_link="Lmain"
-		origin_xyz="0 ${-(x3_width * 3/10)} 0"
-		mass="${x3_m_prop}"
-		radius="${x3_height * 1/8}"
-		length="${x3_length * 1/3}"
-		mirror="-1"
-	/>
+ 
+ <!-- Default joint state publisher -->
+ <gazebo>
+   <plugin name="uuv_joint_state_publisher" filename="libuuv_joint_state_publisher.so">
+     <robotNamespace>$(arg namespace)</robotNamespace>
+     <updateRate>50</updateRate>
+   </plugin>
+ </gazebo>
 
 </robot>

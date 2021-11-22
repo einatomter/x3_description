@@ -1,0 +1,42 @@
+<launch>
+
+  <arg name="rjp_set" default="false"/>
+  <arg name="rsp_set" default="false"/>
+  <arg name="rviz_conf" default="default.rviz"/>
+  <arg name="urdf_file" default="x3_v2.xacro"/>
+
+
+  <param name="robot_description" command="$(find xacro)/xacro '$(find rov_hil)/urdf/$(arg urdf_file)'" />
+
+  <!-- Launch GUI for changing joint values -->
+  <node unless="$(arg rjp_set)" 
+    pkg="joint_state_publisher_gui" 
+    type="joint_state_publisher_gui"
+    name="joint_state_publisher_gui" 
+    output="screen">
+  </node>
+
+  <!-- send fake joint values -->
+  <node if="$(arg rjp_set)" 
+    name="joint_state_publisher" 
+    pkg="joint_state_publisher" 
+    type="joint_state_publisher">
+  </node>
+  
+  <!-- Combine joint values -->
+  <node unless="$(arg rsp_set)" 
+    name="robot_state_publisher" 
+    pkg="robot_state_publisher" 
+    type="robot_state_publisher">
+  </node>
+
+  <!-- Show in Rviz   -->
+  <node name="rviz" 
+    pkg="rviz" 
+    type="rviz" 
+    args="-d $(find rov_hil)/rviz_config/$(arg rviz_conf)">
+  </node>
+
+  <include file="$(find rov_hil)/launch/x3_controller.launch"/>
+
+</launch>
