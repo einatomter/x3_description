@@ -67,6 +67,7 @@ class x3ThrusterControl:
         msg[3].data = msg[3].data + self.linear.y * self.lGain
 
         # compensation for difference in windup time between aft and lateral thrusters
+        # used when ROV is moving in x and y direction at the same time
         if self.linear.x != 0:
             if self.linear.x > 0.9 or self.linear.x < -0.9:
                 msg[3].data = msg[3].data * 2.4

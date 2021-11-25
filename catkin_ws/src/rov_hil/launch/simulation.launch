@@ -20,9 +20,9 @@
     <arg name="include_rviz" default="false"/>
 
     <!-- ROV initial position -->
-    <arg name="x" default="0"/>
-    <arg name="y" default="0"/>
-    <arg name="z" default="0"/>
+    <arg name="x" default="4"/>
+    <arg name="y" default="4"/>
+    <arg name="z" default="-93"/>
     <arg name="yaw" default="0"/>
 
     <!-- Load world -->
