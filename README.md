@@ -1,10 +1,4 @@
-# Masters project
-
-Main repo for master's thesis.
-
-## Current contents:
-
-### X3 ROV Simulation environment
+# X3 simulation
 
 Simulation environment created in ROS and Gazebo. Uses Project Dave for implementing support for UUVs.
 
