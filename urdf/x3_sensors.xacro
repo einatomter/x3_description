@@ -1,0 +1,228 @@
+<?xml version="1.0" ?>
+<robot name="x3_sensors" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+	<!-- includes -->
+	<xacro:include filename="$(find rov_hil)/urdf/helpers.xacro" />
+
+	<!-- properties/variables -->
+	<xacro:arg name="debug" default="0"/>
+	<xacro:arg name="namespace" default="x3_rov"/>
+	<xacro:arg name="inertial_reference_frame" default="world"/>
+
+	<!-- All macros here are based off uf uuv sensor snippets with some modifications -->
+
+	<!-- camera macro -->
+	<xacro:macro name="x3_camera" params="parent_link suffix update_rate img_width img_height *origin">
+		<link name="$(arg namespace)/camera${suffix}_link">
+			<xacro:no_inertia/>
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+				<box size="1e-4 1e-4 1e-4"/>
+				</geometry>
+			</visual>
+
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+				<box size="1e-4 1e-4 1e-4"/>
+				</geometry>
+			</collision>
+		</link>
+
+		<joint name="$(arg namespace)/camera${suffix}_joint" type="revolute">
+			<parent link="${parent_link}"/>
+			<child link="$(arg namespace)/camera${suffix}_link"/>
+
+			<xacro:insert_block name="origin" />
+			<axis xyz="0 1 0"/>
+			<limit effort="1e-12" lower="${-pi/6}" upper="${pi/6}" velocity="0.5"/>
+		</joint>
+
+		<transmission name="$(arg namespace)/camera${suffix}/trans">
+			<type>transmission_interface/SimpleTransmission</type>
+			<joint name="$(arg namespace)/camera${suffix}_joint">
+				<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+			</joint>
+			<actuator name="$(arg namespace)/camera${suffix}/motor">
+				<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+				<mechanicalReduction>1</mechanicalReduction>
+			</actuator>
+		</transmission>
+
+		<gazebo reference="$(arg namespace)/camera${suffix}_link">
+			<sensor type="camera" name="camera${suffix}_link">
+				<update_rate>${update_rate}</update_rate>
+				<camera name="camera${suffix}_link">
+				<vertical_fov>115</vertical_fov>
+				<image>
+					<width>${img_width}</width>
+					<height>${img_height}</height>
+					<format>R8G8B8</format>
+				</image>
+				<clip>
+					<near>0.05</near>
+					<far>300</far>
+				</clip>
+				<noise>
+					<type>gaussian</type>
+					<mean>0.0</mean>
+					<stddev>0.007</stddev>
+				</noise>
+				</camera>
+				<plugin name="camera${suffix}_controller" filename="libgazebo_ros_camera.so">
+				<updateRate>30</updateRate>
+
+				<cameraName>x3_cam</cameraName>
+				<frameName>$(arg namespace)/camera${suffix}_link</frameName>
+				<imageTopicName>image_raw</imageTopicName>
+				<cameraInfoTopicName>camera_info</cameraInfoTopicName>
+
+				<hackBaseline>0.7</hackBaseline>
+
+				<distortionK1>0.0</distortionK1>
+				<distortionK2>0.0</distortionK2>
+				<distortionK3>0.0</distortionK3>
+				<distortionT1>0.0</distortionT1>
+				<distortionT2>0.0</distortionT2>
+
+				<attenuationR>0.0</attenuationR>
+				<attenuationG>0.0</attenuationG>
+				<attenuationB>0.0</attenuationB>
+
+				<backgroundR>0</backgroundR>
+				<backgroundG>0</backgroundG>
+				<backgroundB>0</backgroundB>
+
+				<imageTopicName>image_raw</imageTopicName>
+
+				<!-- required for ros depth cam -->
+				<!-- <pointCloudTopicName>image_cloud</pointCloudTopicName>
+				<depthImageTopicName>image_depth</depthImageTopicName>
+				<depthImageCameraInfoTopicName>image_depth_info</depthImageCameraInfoTopicName>
+				<pointCloudCutoff>10.0</pointCloudCutoff> -->
+				</plugin>
+			</sensor>
+		</gazebo>
+	</xacro:macro>
+
+	<!-- IMU macro -->
+	<xacro:macro name="x3_imu"
+		params="namespace parent_link update_rate enable_local_ned_frame reference_frame *origin">
+		<!-- IMU link -->
+		<link name="${namespace}/imu_link">
+			<xacro:no_inertia/>
+		</link>
+
+		<!-- IMU joint -->
+		<joint name="${namespace}/imu_joint" type="revolute">
+			<xacro:insert_block name="origin" />
+			<parent link="${parent_link}" />
+			<child link="${namespace}/imu_link" />
+			<limit upper="0" lower="0" effort="0" velocity="0" />
+			<axis xyz="1 0 0"/>
+		</joint>
+
+		<gazebo>
+			<plugin filename="libuuv_gazebo_ros_imu_plugin.so" name="libuuv_gazebo_imu_plugin">
+			<!-- A good description of the IMU parameters can be found in the kalibr documentation:
+				https://github.com/ethz-asl/kalibr/wiki/IMU-Noise-Model-and-Intrinsics -->
+				<robot_namespace>${namespace}</robot_namespace> <!-- (string, required): ros namespace in which the messages are published -->
+				<link_name>${namespace}/imu_link</link_name> <!-- (string, required): name of the body which holds the IMU sensor -->
+				<sensor_topic>imu</sensor_topic> <!-- (string): name of the sensor output topic and prefix of service names (defaults to imu) -->
+
+				<gyroscope_noise_density>0.0003394</gyroscope_noise_density> <!-- Gyroscope noise density (two-sided spectrum) [rad/s/sqrt(Hz)] -->
+				<gyroscope_random_walk>0.000038785</gyroscope_random_walk> <!-- Gyroscope bias random walk [rad/s/s/sqrt(Hz)] -->
+				<gyroscope_bias_correlation_time>1000.0</gyroscope_bias_correlation_time> <!-- Gyroscope bias correlation time constant [s] -->
+				<gyroscope_turn_on_bias_sigma>0.0087</gyroscope_turn_on_bias_sigma> <!-- Gyroscope turn on bias standard deviation [rad/s] -->
+
+				<accelerometer_noise_density>0.004</accelerometer_noise_density> <!-- Accelerometer noise density (two-sided spectrum) [m/s^2/sqrt(Hz)] -->
+				<accelerometer_random_walk>0.006</accelerometer_random_walk> <!-- Accelerometer bias random walk. [m/s^2/s/sqrt(Hz)] -->
+				<accelerometer_bias_correlation_time>300.0</accelerometer_bias_correlation_time> <!-- Accelerometer bias correlation time constant [s] -->
+				<accelerometer_turn_on_bias_sigma>0.1960</accelerometer_turn_on_bias_sigma> <!-- Accelerometer turn on bias standard deviation [m/s^2] -->
+				<orientation_noise>0.01</orientation_noise>
+
+				<update_rate>${update_rate}</update_rate> <!-- Update period of accelerometer and gyroscope [s] -->
+				<enable_gazebo_messages>false</enable_gazebo_messages>
+				<enable_local_ned_frame>${enable_local_ned_frame}</enable_local_ned_frame>
+				<static_reference_frame>${reference_frame}</static_reference_frame>
+			</plugin>
+		</gazebo>
+	</xacro:macro>
+
+	<!-- magnetometer macro -->
+	<xacro:macro name="x3_magnetometer" params="namespace parent_link update_rate *origin">
+		<!-- Sensor link -->
+		<link name="${namespace}/magnetometer_link">
+			<xacro:no_inertia/>
+		</link>
+
+		<!-- Sensor joint -->
+		<joint name="${namespace}/magnetometer_joint" type="revolute">
+			<xacro:insert_block name="origin" />
+			<parent link="${parent_link}" />
+			<child link="${namespace}/magnetometer_link" />
+			<limit upper="0" lower="0" effort="0" velocity="0" />
+			<axis xyz="1 0 0"/>
+		</joint>
+
+		<gazebo>
+			<plugin filename="libuuv_gazebo_ros_magnetometer_plugin.so" name="libuuv_gazebo_ros_magnetometer_plugin">
+				<robot_namespace>${namespace}</robot_namespace> <!-- (string, required): ros namespace in which the messages are published -->
+				<link_name>${namespace}/magnetometer_link</link_name> <!-- (string, required): name of the body which holds the IMU sensor -->
+				<sensor_topic>magnetometer</sensor_topic> <!-- (string): name of the sensor output topic and prefix of service names (defaults to imu) -->
+				<update_rate>${update_rate}</update_rate> <!-- Update period of accelerometer and gyroscope [s] -->
+
+				<intensity>65.0</intensity> <!-- magnitude of magnetic field [muT] -->
+				<reference_heading>${pi}</reference_heading> <!-- reference heading [rad] -->
+				<declination>0.0</declination> <!-- reference declination [rad] -->
+				<inclination>${pi*60/180}</inclination> <!-- refernce inclination [rad] -->
+				<noise_xy>1.0</noise_xy> <!-- Discrete-time std. dev. of output noise in xy-axis [muT] -->
+				<noise_z>1.4</noise_z> <!-- Discrete-time std. dev. of output noise in z-axis [muT] -->
+				<turn_on_bias>2.0</turn_on_bias> <!-- Std. dev. of turn-on-bias [muT] -->
+				<noise_amplitude>0</noise_amplitude>
+
+				<enable_gazebo_messages>false</enable_gazebo_messages>
+				<enable_local_ned_frame>false</enable_local_ned_frame>
+			</plugin>
+		</gazebo>
+	</xacro:macro>
+
+	<!-- pressure macro -->
+	<xacro:macro name="x3_pressure" params="namespace parent_link update_rate *origin">
+		<!-- Sensor link -->
+		<link name="${namespace}/pressure_link">
+			<xacro:no_inertia/>
+			<!-- <visual>
+				<geometry>
+				<mesh filename="file://$(find uuv_sensor_ros_plugins)/meshes/pressure.dae" scale="1 1 1"/>
+				</geometry>
+			</visual> -->
+		</link>
+
+		<joint name="${namespace}/pressure_joint" type="revolute">
+			<xacro:insert_block name="origin" />
+			<parent link="${parent_link}" />
+			<child link="${namespace}/pressure_link" />
+			<limit upper="0" lower="0" effort="0" velocity="0" />
+			<axis xyz="1 0 0"/>
+		</joint>
+
+		<gazebo>
+			<plugin filename="libuuv_gazebo_ros_subsea_pressure_plugin.so" name="libuuv_gazebo_subseapressure_plugin">
+				<robot_namespace>${namespace}</robot_namespace> <!-- (string, required): ros namespace in which the messages are published -->
+				<link_name>${namespace}/pressure_link</link_name> <!-- (string, required): name of the body which holds the IMU sensor -->
+				<sensor_topic>pressure</sensor_topic> <!-- (string): name of the sensor output topic and prefix of service names (defaults to imu) -->
+				<update_rate>${update_rate}</update_rate> <!-- Update period of accelerometer and gyroscope [s] -->
+
+				<saturation>30000</saturation> <!-- measurement range [kPa] -->
+				<noise_sigma>3.0</noise_sigma> <!-- measurement stddev [kPa] -->
+				<noise_amplitude>0.0</noise_amplitude>
+				<estimate_depth_on>false</estimate_depth_on> <!-- infer depth? -->
+				<standard_pressure>101.325</standard_pressure> <!-- pressure at sea level (depth 0 m) [kPa] -->
+				<kPa_per_meter>9.80638</kPa_per_meter> <!-- increase in pressure [kPa] per [m] in increased depth -->
+				<enable_gazebo_messages>false</enable_gazebo_messages>
+			</plugin>
+		</gazebo>
+	</xacro:macro>
+</robot>

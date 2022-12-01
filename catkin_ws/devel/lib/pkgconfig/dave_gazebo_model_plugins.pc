@@ -1,8 +1,0 @@
-prefix=/home/einar/Desktop/Robotics_projects/Masters-project/catkin_ws/devel
-
-Name: dave_gazebo_model_plugins
-Description: Description of dave_gazebo_model_plugins
-Version: 3.1.1
-Cflags: -I/home/einar/Desktop/Robotics_projects/Masters-project/catkin_ws/devel/include -I/home/einar/Desktop/Robotics_projects/Masters-project/catkin_ws/src/dave/gazebo/dave_gazebo_model_plugins/include
-Libs: -L${prefix}/lib -ldave_transient_current_plugin
-Requires: roscpp gazebo_msgs gazebo_dev gazebo_ros message_runtime dave_gazebo_world_plugins dave_gazebo_ros_plugins

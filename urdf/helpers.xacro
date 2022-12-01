@@ -1,0 +1,47 @@
+<?xml version="1.0" ?>
+<robot name="macro_helpers" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+	<!-- properties/variables -->
+	<xacro:arg name="debug" default="0"/>
+	<xacro:arg name="namespace" default="x3_rov"/>
+	<xacro:arg name="inertial_reference_frame" default="world"/>
+
+	<!-- * * * inertial calculations * * * -->
+	<!-- source: -->
+	<!-- https://github.com/ros-industrial/universal_robot/blob/06d8b9e2f5f86aa54f9f2845f11edbc84e2f951e/ur_description/urdf/ur10.urdf.xacro#L12-L20 -->
+
+	<!-- cylinder -->
+	<xacro:macro name="cylinder_inertial" params="*origin mass radius length">
+		<inertial>
+		<mass value="${mass}" />
+				<xacro:insert_block name="origin" />
+		<inertia
+			ixx="${0.0833333 * mass * (3 * radius * radius + length * length)}" ixy="0.0" ixz="0.0"
+			iyy="${0.0833333 * mass * (3 * radius * radius + length * length)}" iyz="0.0"
+			izz="${0.5 * mass * radius * radius}" 
+				/>
+		</inertial>
+  	</xacro:macro>
+
+	<!-- adds inertia block with negligible values -->
+	<xacro:macro name="no_inertia">
+		<xacro:box_inertial 
+			mass="1e-4"
+			x="1e-4"
+			y="1e-4"
+			z="1e-4">
+		<origin xyz="0 0 0" rpy="0 0 0"/>
+		</xacro:box_inertial>
+	</xacro:macro>
+
+	<!-- adds collision with negligible values -->
+	<xacro:macro name="no_collision">
+		<collision>
+			<geometry>
+				<cylinder length="${0.000001}" radius="${0.000001}" />
+			</geometry>
+			<origin xyz="0 0 0" rpy="0 ${0.5*pi} 0"/>
+		</collision>
+	</xacro:macro>
+
+</robot>

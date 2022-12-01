@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="paused" default="false"/>
+    <arg name="world_name" default="herkules_ship_wreck.launch"/>
+    <!-- 
+    World names:
+        auv_underwater_world.launch
+        empty_underwater_world.launch
+        herkules_ship_wreck.launch
+            2 -2 -56 -1
+        lake.launch
+        mangalia_manipulation.launch
+        mangalia.launch
+        munkholmen.launch
+        ocean_waves.launch
+            4 4 -93 0
+        rov_bop_panel.launch
+        subsea_bop_panel.launch
+    -->
+    <arg name="urdf_file" default="x3_v2.xacro"/>
+    <arg name="rqt_file" default="default.perspective"/>
+    <arg name="include_rviz" default="false"/>
+
+    <!-- ROV initial position -->
+    <arg name="x" default="2"/>
+    <arg name="y" default="-2"/>
+    <arg name="z" default="-56"/>
+    <arg name="yaw" default="3.14"/>
+
+    <!-- Load world -->
+    <include file="$(find uuv_gazebo_worlds)/launch/$(arg world_name)">
+        <arg name="paused" value="$(arg paused)"/>
+    </include>
+
+    <!-- Upload model -->
+    <include file="$(find rov_hil)/launch/upload_x3.launch">
+        <arg name="x" value="$(arg x)"/>
+        <arg name="y" value="$(arg y)"/>
+        <arg name="z" value="$(arg z)"/>
+        <arg name="yaw" value="$(arg yaw)"/>
+    </include>
+
+    <!-- Publish model state (ground truth) -->
+    <include file="$(find rov_hil)/launch/ground_truth.launch">
+        <arg name="uuv_name" value="x3_rov"/>
+        <arg name="x" value="$(arg x)"/>
+        <arg name="y" value="$(arg y)"/>
+        <arg name="z" value="$(arg z)"/>
+        <arg name="yaw" value="$(arg yaw)"/>
+    </include>
+
+    <!-- Rqt -->
+    <node name="rqt_dashboard" 
+        pkg="rqt_gui" 
+        type="rqt_gui"
+        respawn="false" 
+        output="screen"
+        args="">
+    </node>
+
+    <!-- Rviz -->
+    <include if="$(arg include_rviz)" file="$(find rov_hil)/launch/rviz.launch">
+        <arg name="only_rviz" value="false"/>
+        <arg name="rviz_conf" value="camera.rviz"/>
+        <arg name="urdf_file" value="$(arg urdf_file)"/>
+    </include>
+
+</launch>

@@ -1,0 +1,201 @@
+<?xml version="1.0"?>
+<robot name="x3_rov" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+	<!-- includes -->
+	<!-- <xacro:include filename="$(find rov_hil)/urdf/materials.xacro" /> -->
+	<xacro:include filename="$(find rov_hil)/urdf/helpers.xacro" />
+	<xacro:include filename="$(find rov_hil)/urdf/x3_components.xacro" />
+	<xacro:include filename="$(find rov_hil)/urdf/x3_sensors.xacro" />
+
+
+	<!-- properties/variables -->
+	<xacro:arg name="debug" default="0"/>
+	<xacro:arg name="namespace" default="x3_rov"/>
+	<xacro:arg name="inertial_reference_frame" default="world"/>
+	<xacro:property name="neutrally_buoyant" value="0" />
+
+	<xacro:property name="x3_length" value="0.485" />	<!-- m  -->
+	<xacro:property name="x3_width"  value="0.257" /> 	<!-- m  -->
+	<xacro:property name="x3_height" value="0.354" /> 	<!-- m  -->
+
+	<!-- center of balance xyz -->
+	<xacro:property name="x3_cobx"	 value="0.023465" />
+	<xacro:property name="x3_coby"	 value="0"        />
+	<xacro:property name="x3_cobz"	 value="0.06848"  />
+	<xacro:property name="x3_cob"	 value="${x3_cobx} ${x3_coby} ${x3_cobz}" />	<!-- m -->
+	<xacro:property name="x3_mass"   value="8.6" />      <!-- kg -->
+	<!-- calculations are based roughly on volume distribution -->
+	<xacro:property name="x3_m_main"     value="${x3_mass * 0.66}" />
+	<xacro:property name="x3_m_fin"      value="${x3_mass * 0.14}" />
+	<xacro:property name="x3_m_thruster" value="${x3_mass * 0.03}" />
+
+
+	<!-- * * * LINK DEFINITIONS * * * -->
+
+	<!-- Dummy link to suppress warnings about root link inertia -->
+	<!-- VERY IMPORTANT! Base link NEEDS to be target of hydrodynamic calculations -->
+	<link name="$(arg namespace)/base_link">
+	</link>
+
+	<link name="$(arg namespace)/x3_rov_link">
+		<xacro:box_inertial 
+			mass="${x3_mass}" 
+			x="${x3_length}" 
+			y="${x3_width * 4/5}" 
+			z="${x3_height}"
+		>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+		</xacro:box_inertial>
+
+		<collision>
+			<origin xyz="${x3_length * 3/16} 0 0" rpy="0 0 0"/>
+			<geometry>
+				<box size="${x3_length * 5/8} ${x3_width * 3/5} ${x3_height}"/>
+			</geometry>
+		</collision>
+
+		<visual>
+			<!-- <origin rpy="0 0 0" xyz="${x3_length * 3/16} 0 0"/> -->
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry>
+				<!-- <box size="${x3_length*5/8} ${x3_width * 3/5} ${x3_height}"/> -->
+				<mesh filename="package://rov_hil/models/x3_low_poly_smoothed.dae"/>
+			</geometry>
+			<material name="grey"/>
+		</visual>
+	</link>
+
+	<!-- Attaching body to dummy link -->
+	<joint name="$(arg namespace)/base_joint" type="fixed">
+		<parent link="$(arg namespace)/base_link"/>
+		<child link="$(arg namespace)/x3_rov_link"/>
+	</joint>
+
+	<!-- top fin -->
+	<xacro:x3_fin
+		suffix="top"
+		parent_link="$(arg namespace)/base_link"
+		origin_xyz="0 0 ${x3_height*(1/2 - 1/6)}"
+		mass="1e-5"
+		radius="${x3_height * 1/6}"
+		length="${x3_length/2}"
+	/>
+	<!-- bottom fin -->
+	<xacro:x3_fin
+		suffix="bot"
+		parent_link="$(arg namespace)/base_link"
+		origin_xyz="0 0 ${-x3_height*(1/2 - 1/6)}"
+		mass="1e-5"
+		radius="${x3_height * 1/6}"
+		length="${x3_length/2}"
+	/>
+	<!-- left thruster -->
+	<xacro:x3_thruster
+		suffix="left"
+		parent_link="$(arg namespace)/base_link"
+		origin_xyz="0 ${x3_width * 3/10} 0"
+		mass="1e-5"
+		radius="${x3_height * 1/8}"
+		length="${x3_length * 1/3}"
+		mirror="1"
+	/>
+	<!-- right thruster -->
+	<xacro:x3_thruster
+		suffix="right"
+		parent_link="$(arg namespace)/base_link"
+		origin_xyz="0 ${-(x3_width * 3/10)} 0"
+		mass="1e-5"
+		radius="${x3_height * 1/8}"
+		length="${x3_length * 1/3}"
+		mirror="-1"
+	/>
+
+	<!-- * * * SENSOR DEFINITIONS * * * -->
+
+	<!-- camera -->
+	<xacro:x3_camera
+		suffix="1"
+		parent_link="$(arg namespace)/base_link"
+		update_rate="30"
+		img_width="1920"
+		img_height="1080">
+	<origin xyz="${x3_length*48/100} 0 ${x3_height*26/100}" rpy="0 0 0"/>
+	</xacro:x3_camera>
+
+	<!-- imu -->
+	<xacro:x3_imu
+      namespace="$(arg namespace)"
+      parent_link="$(arg namespace)/base_link"
+	  update_rate="100"
+	  enable_local_ned_frame="false"
+	  reference_frame="world">	<!-- (false,world), (true,world_ned)-->
+	  <origin xyz="0.1239 -0.0442 -0.1173" rpy="0 0 0"/>
+    </xacro:x3_imu>
+
+	<!-- magnetometer -->
+	<xacro:x3_magnetometer
+      namespace="$(arg namespace)"
+      parent_link="$(arg namespace)/base_link"
+	  update_rate="100">
+	  <origin xyz="0.1239 -0.0442 -0.1173" rpy="0 0 0"/>
+    </xacro:x3_magnetometer>
+
+	<!-- pressure sensor -->
+	<xacro:x3_pressure
+      namespace="$(arg namespace)"
+      parent_link="$(arg namespace)/base_link"
+	  update_rate="42">
+	  <origin xyz="0.0547 -0.0008 -0.0951" rpy="0 0 0"/>
+    </xacro:x3_pressure>
+
+
+	<!-- THRUSTER DEFINITIONS -->
+
+	<!-- Port-Aft (left-back)-->
+	<xacro:thruster_macro thruster_id="0">
+		<origin xyz="${-x3_length * 21/80} ${ (x3_width * 31/100)} 0" rpy="0 0 ${pi}"/>
+	</xacro:thruster_macro>
+
+	<!-- Stbd-Aft (right-back)-->
+	<xacro:thruster_macro thruster_id="1">
+		<origin xyz="${-x3_length * 21/80} ${-(x3_width * 31/100)} 0" rpy="0 0 ${pi}"/>
+	</xacro:thruster_macro>
+
+	<!-- Middle-Vert -->
+	<xacro:thruster_macro thruster_id="2">
+		<origin xyz="0 0 ${x3_height*(1/2 - 1/6)}" rpy="0 ${-pi/2} 0"/>
+	</xacro:thruster_macro>
+
+	<!-- Middle-Lat -->
+	<xacro:thruster_macro thruster_id="3">
+		<origin xyz="${x3_cobz + 0.02} 0 0" rpy="0 0 ${pi/2}"/>
+	</xacro:thruster_macro>
+
+
+
+	<!-- Creating hydrodynamic model of the system -->
+	<xacro:rov_hydro_model
+		parent_link="$(arg namespace)/base_link"
+		mass="${x3_mass}"
+		length="${x3_length}"
+		width="${x3_width}"
+		height="${x3_height}"
+		cob="${x3_cob}"
+		neutrally_buoyant="${neutrally_buoyant}"
+	/>
+
+	<!-- * * * GAZEBO CONFIGURATION * * * -->
+
+	<gazebo>
+		<plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+			<robotNamespace>/$(arg namespace)</robotNamespace>
+			<robotParam>/$(arg namespace)/robot_description</robotParam>
+		</plugin>
+		<!-- Default joint state publisher -->
+		<plugin name="uuv_joint_state_publisher" filename="libuuv_joint_state_publisher.so">
+			<robotNamespace>$(arg namespace)</robotNamespace>
+			<updateRate>50</updateRate>
+		</plugin>
+	</gazebo>
+
+</robot>
