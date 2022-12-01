@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="3">
-  <name>rov_hil</name>
+  <name>x3_sim</name>
   <version>0.0.0</version>
-  <description>The rov_hil package</description>
+  <description>The x3_sim package</description>
   <maintainer email="einar@todo.todo">einar</maintainer>
   <license>TODO</license>
 

@@ -9,7 +9,7 @@
   <arg name="pitch" default="0"/>
   <arg name="yaw" default="0"/>
 
-  <node pkg="rov_hil" 
+  <node pkg="x3_sim" 
     type="x3_publish_model_state.py" 
     name="x3_model_state"
     output="screen">
