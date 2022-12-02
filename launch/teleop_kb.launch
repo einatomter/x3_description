@@ -4,7 +4,7 @@
   <!-- The type of message can also be geometry_msgs/Accel -->
   <arg name="message_type" default="twist"/>
 
-  <node pkg="rov_hil" 
+  <node pkg="x3_sim" 
     type="x3_teleop_keyboard_pynput.py" 
     name="x3_teleop_keyboard" 	
     output="screen">
@@ -14,13 +14,13 @@
     </rosparam>
   </node>
 
-  <node pkg="rov_hil" 
+  <node pkg="x3_sim" 
     type="x3_teleop_twist_thruster.py" 
     name="x3_teleop_twist_thruster" 	
     output="screen">
   </node>
 
-  <node pkg="rov_hil" 
+  <node pkg="x3_sim" 
     type="x3_camera.py" 
     name="x3_camera" 	
     output="screen">

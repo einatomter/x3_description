@@ -33,7 +33,7 @@
     </include>
 
     <!-- Upload model -->
-    <include file="$(find rov_hil)/launch/upload_x3.launch">
+    <include file="$(find x3_sim)/launch/upload_x3.launch">
         <arg name="x" value="$(arg x)"/>
         <arg name="y" value="$(arg y)"/>
         <arg name="z" value="$(arg z)"/>
@@ -41,7 +41,7 @@
     </include>
 
     <!-- Publish model state (ground truth) -->
-    <include file="$(find rov_hil)/launch/ground_truth.launch">
+    <include file="$(find x3_sim)/launch/ground_truth.launch">
         <arg name="uuv_name" value="x3_rov"/>
         <arg name="x" value="$(arg x)"/>
         <arg name="y" value="$(arg y)"/>
@@ -59,7 +59,7 @@
     </node>
 
     <!-- Rviz -->
-    <include if="$(arg include_rviz)" file="$(find rov_hil)/launch/rviz.launch">
+    <include if="$(arg include_rviz)" file="$(find x3_sim)/launch/rviz.launch">
         <arg name="only_rviz" value="false"/>
         <arg name="rviz_conf" value="camera.rviz"/>
         <arg name="urdf_file" value="$(arg urdf_file)"/>

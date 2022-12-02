@@ -64,7 +64,7 @@
     </node>
 
      <param name="/$(arg namespace)/robot_description"
-           command="$(find xacro)/xacro '$(find rov_hil)/urdf/$(arg urdf_file)' --inorder
+           command="$(find xacro)/xacro '$(find x3_sim)/urdf/$(arg urdf_file)' --inorder
 		    debug:=$(arg debug)
 		    namespace:=$(arg namespace)
 		    inertial_reference_frame:=world" />

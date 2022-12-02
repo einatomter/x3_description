@@ -12,7 +12,7 @@
     <arg name="yaw" default="-1.8"/>
 
     <param name="/$(arg namespace)/robot_description"
-           command="$(find xacro)/xacro '$(find rov_hil)/urdf/$(arg urdf_file)'
+           command="$(find xacro)/xacro '$(find x3_sim)/urdf/$(arg urdf_file)'
 		                debug:=$(arg debug)
                     namespace:=$(arg namespace)
                     inertial_reference_frame:=world" />
@@ -29,7 +29,7 @@
     </node>
 
     <!-- Controller for joints not included within uuv joint state publisher -->
-    <include file="$(find rov_hil)/launch/joint_state_controller.launch"/>
+    <include file="$(find x3_sim)/launch/joint_state_controller.launch"/>
     
     <!-- Robot state publisher subscribes to the custom joint state publisher -->
     <node name="robot_state_publisher" 

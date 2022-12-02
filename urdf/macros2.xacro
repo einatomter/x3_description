@@ -294,7 +294,7 @@
 	<xacro:include filename="$(find uuv_descriptions)/urdf/common.urdf.xacro"/>
 	<xacro:include filename="$(find uuv_gazebo_ros_plugins)/urdf/thruster_snippets.xacro"/>
 	<!-- Thruster model -->
-	<xacro:property name="thruster_mesh_file" value="file://$(find rov_hil)/models/x3_low_poly_propeller.dae"/>
+	<xacro:property name="thruster_mesh_file" value="file://$(find x3_sim)/models/x3_low_poly_propeller.dae"/>
 	<!-- Wrapper for thruster macro -->
 	<xacro:macro name="thruster_macro" params="thruster_id *origin">
 		<xacro:thruster_module_first_order_basic_fcn_macro

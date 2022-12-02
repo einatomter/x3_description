@@ -2,8 +2,8 @@
 <robot name="x3_rov" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
 	<!-- includes -->
-	<!-- <xacro:include filename="$(find rov_hil)/urdf/materials.xacro" /> -->
-	<xacro:include filename="$(find rov_hil)/urdf/macros2.xacro" />
+	<!-- <xacro:include filename="$(find x3_sim)/urdf/materials.xacro" /> -->
+	<xacro:include filename="$(find x3_sim)/urdf/macros2.xacro" />
 
 	<!-- properties/variables -->
 	<xacro:arg name="debug" default="0"/>
@@ -52,7 +52,7 @@
 			<origin xyz="0 0 0" rpy="0 0 0"/>
 			<geometry>
 				<!-- <box size="${x3_length*5/8} ${x3_width * 3/5} ${x3_height}"/> -->
-				<mesh filename="package://rov_hil/models/x3_low_poly_smoothed.dae"/>
+				<mesh filename="package://x3_sim/models/x3_low_poly_smoothed.dae"/>
 			</geometry>
 			<material name="grey"/>
 		</visual>

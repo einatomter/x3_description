@@ -6,7 +6,7 @@
   <arg name="urdf_file" default="x3_v2.xacro"/>
 
 
-  <param name="robot_description" command="$(find xacro)/xacro '$(find rov_hil)/urdf/$(arg urdf_file)'" />
+  <param name="robot_description" command="$(find xacro)/xacro '$(find x3_sim)/urdf/$(arg urdf_file)'" />
 
   <!-- Launch GUI for changing joint values -->
   <node unless="$(arg rjp_set)" 
@@ -34,9 +34,9 @@
   <node name="rviz" 
     pkg="rviz" 
     type="rviz" 
-    args="-d $(find rov_hil)/rviz_config/$(arg rviz_conf)">
+    args="-d $(find x3_sim)/rviz_config/$(arg rviz_conf)">
   </node>
 
-  <include file="$(find rov_hil)/launch/x3_controller.launch"/>
+  <include file="$(find x3_sim)/launch/x3_controller.launch"/>
 
 </launch>
