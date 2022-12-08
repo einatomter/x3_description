@@ -131,7 +131,7 @@
       orientation_noise="0.01"
       enable_local_ned_frame="false"
       reference_frame="world"
-      update_rate="200">
+      update_rate="100">
       <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001" />
       <origin xyz="${x3_length*48/100} 0 ${x3_height*26/100}" rpy="0 0 0"/>
     </xacro:imu_plugin_macro>

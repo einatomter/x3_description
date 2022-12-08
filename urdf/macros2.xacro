@@ -189,7 +189,7 @@
 
 		<gazebo reference="$(arg namespace)/camera${suffix}_link">
 			<sensor type="camera" name="camera${suffix}_link">
-				<update_rate>20</update_rate>
+				<update_rate>30</update_rate>
 				<camera name="camera${suffix}_link">
 				<vertical_fov>115</vertical_fov>
 				<image>
