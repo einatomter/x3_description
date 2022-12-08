@@ -14,10 +14,14 @@ from gazebo_msgs.srv import GetModelState, GetModelStateRequest
 # TODO: make class
 
 # camera frame
-T_wc = np.array([[ 0,  0, 1, 0.2328 ],
-                 [-1,  0, 0, 0      ],
-                 [ 0, -1, 0, 0.09204],
+T_wc = np.array([[ 1,  0, 0, 0.2328 ],
+                 [ 0,  1, 0, 0      ],
+                 [ 0,  0, 1, 0.09204],
                  [ 0,  0, 0, 1      ]])
+# T_wc = np.array([[ 0,  0, 1, 0.2328 ],
+#                  [-1,  0, 0, 0      ],
+#                  [ 0, -1, 0, 0.09204],
+#                  [ 0,  0, 0, 1      ]])
 
 def get_initial_pose():
     '''
@@ -115,6 +119,7 @@ def convert_reference_frame(T_wi, pose: Pose):
     q_wb = [pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w]
     R_wb = quaternion_matrix(q_wb)
 
+    # yes this is not how you're supposed to do it
     T_wb = np.array([[0, 0, 0, pose.position.x],
                      [0, 0, 0, pose.position.y],
                      [0, 0, 0, pose.position.z],
