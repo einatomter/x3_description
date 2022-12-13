@@ -4,7 +4,7 @@ import os
 
 import rospy
 import numpy as np
-from geometry_msgs.msg import Twist, Vector3
+from geometry_msgs.msg import Wrench, Vector3
 
 from std_msgs.msg import Float64
 
@@ -15,9 +15,9 @@ class x3Camera:
         self.limitDeg  = 30     # Max/min angle
 
         # publish to camera joint
-        self.cameraJoint = rospy.Publisher(f"/{namespace}/camera1/controller/command", Float64, queue_size=1)
+        self.cameraJoint = rospy.Publisher(f"/{namespace}/camera/controller/command", Float64, queue_size=1)
         # subscribe to cmd_vel topic
-        self.cmd_vel_Sub = rospy.Subscriber(f"/{namespace}/cmd_vel", Twist, self._callback)
+        self.cmd_vel_Sub = rospy.Subscriber(f"/x3/thruster_manager/input", Wrench, self._callback)
 
         # Ros Spin
         rate = rospy.Rate(10) # Hz
@@ -36,13 +36,13 @@ class x3Camera:
         print(msg.data)
         self.cameraJoint.publish(msg)
 
-    def _callback(self, cmd):
+    def _callback(self, cmd: Wrench):
         # tilt down
-        if cmd.angular.y > 0:
-            self._updateAngle(cmd.angular.y, -1)
+        if cmd.torque.y > 0:
+            self._updateAngle(cmd.torque.y, -1)
         # tilt up
-        elif cmd.angular.y < 0:
-            self._updateAngle(cmd.angular.y, 1)
+        elif cmd.torque.y < 0:
+            self._updateAngle(cmd.torque.y, 1)
 
 if __name__ == '__main__':
     # Start the node
@@ -51,7 +51,7 @@ if __name__ == '__main__':
     rospy.loginfo('Starting [%s] node' % node_name)
 
     # Get params
-    ns = 'x3_rov'
+    ns = 'x3'
     if rospy.has_param('~namespace'):
         ns = rospy.get_param('~namespace')
 

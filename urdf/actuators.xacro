@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+	<!-- THRUSTER DEFINITIONS -->
+
+	<!-- Port-aft (left-behind)-->
+	<xacro:thruster_macro robot_namespace="${namespace}" thruster_id="0">
+		<origin xyz="${-x3_length * 21/80} ${ (x3_width * 31/100)} 0" rpy="0 0 ${pi}"/>
+	</xacro:thruster_macro>
+
+	<!-- Starboard-aft (right-behind)-->
+	<xacro:thruster_macro robot_namespace="${namespace}" thruster_id="1">
+		<origin xyz="${-x3_length * 21/80} ${-(x3_width * 31/100)} 0" rpy="0 0 ${pi}"/>
+	</xacro:thruster_macro>
+
+	<!-- Middle-lateral -->
+	<xacro:thruster_macro robot_namespace="${namespace}" thruster_id="2">
+		<origin xyz="${x3_length * 17.5/100} 0 0" rpy="0 0 ${pi/2}"/>
+	</xacro:thruster_macro>
+
+	<!-- Middle-vertical -->
+	<xacro:thruster_macro robot_namespace="${namespace}" thruster_id="3">
+		<origin xyz="0 0 ${x3_height*(1/2 - 1/6)}" rpy="0 ${-pi/2} 0"/>
+	</xacro:thruster_macro>
+
+</robot>

@@ -1,0 +1,410 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!--                                                                      -->
+  <!-- MACRO FOR THRUSTER UNITS  -->
+  <!--                                                                      -->
+  <xacro:property name="prop_mesh_file" value="file://$(find x3_description)/meshes/propeller.dae"/>
+
+  <!--
+    Thruster macro with integration of joint and link. The thrusters should
+    be initialized in the actuators.xacro file.
+  -->
+  <xacro:macro name="thruster_macro" params="robot_namespace thruster_id *origin">
+
+    <!--
+    Dummy link as place holder for the thruster frame,
+    since thrusters can often be inside the collision geometry
+    of the vehicle and may cause internal collisions if set otherwise
+    -->
+    <link name="${robot_namespace}/thruster_${thruster_id}">
+
+      <visual>
+        <geometry>
+          <mesh filename="${prop_mesh_file}" scale="1 1 1" />
+        </geometry>
+      </visual>
+
+      <inertial>
+        <mass value="0.001" />
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <inertia ixx="0.000000017" ixy="0.0" ixz="0.0"
+               iyy="0.000000017" iyz="0.0"
+               izz="0.000000017" />
+      </inertial>
+    </link>
+
+    <!-- Joint between thruster link and vehicle base link -->
+    <joint name="${robot_namespace}/thruster_${thruster_id}_joint" type="continuous">
+      <xacro:insert_block name="origin" />
+      <axis xyz="1 0 0" />
+      <parent link="${robot_namespace}/base_link" />
+      <child link="${robot_namespace}/thruster_${thruster_id}" />
+    </joint>
+
+    <gazebo>
+      <!-- Thruster ROS plugin -->
+      <plugin name="${robot_namespace}_${thruster_id}_thruster_model" filename="libuuv_thruster_ros_plugin.so">
+        <!-- Name of the thruster link -->
+        <linkName>${robot_namespace}/thruster_${thruster_id}</linkName>
+
+        <!-- Name of the joint between thruster and vehicle base link -->
+        <jointName>${robot_namespace}/thruster_${thruster_id}_joint</jointName>
+
+        <!-- Make the thruster aware of its id -->
+        <thrusterID>${thruster_id}</thrusterID>
+
+        <!-- Gain of the input command signal -->
+        <gain>1</gain>
+
+        <!-- Maximum allowed input value for the input signal for thruster unit -->
+        <clampMax>0</clampMax>
+
+        <!-- Minimum allowed value for the input signal for thruster unit -->
+        <clampMin>0</clampMin>
+
+        <!-- Minimum and maximum thrust force output allowed -->
+        <thrustMin>0</thrustMin>
+        <thrustMax>0</thrustMax>
+
+        <!--
+        Value from 0 to 1 to set the efficiency of the output thrust force
+        Default value is 1.0
+        -->
+        <thrust_efficiency>1</thrust_efficiency>
+
+        <!--
+        Value from 0 to 1 to set the efficiency of the propeller as a factor
+        to be multiplied to the current value of the state variable at each
+        iteration.
+        Default value is 1.0
+        -->
+        <propeller_efficiency>1</propeller_efficiency>
+
+        <!-- Propeller dynamics -->
+        <!-- First order model -->
+        <dynamics>
+          <type>FirstOrder</type>
+          <timeConstant>0.1</timeConstant>
+        </dynamics>
+
+        <!-- Basic curve -->
+        <conversion>
+          <type>Basic</type>
+          <rotorConstant>0.00005</rotorConstant>
+        </conversion>
+
+      </plugin>
+    </gazebo>
+
+    <gazebo reference="${robot_namespace}/thruster_${thruster_id}">
+      <selfCollide>false</selfCollide>
+    </gazebo>
+  </xacro:macro>
+
+
+
+
+
+  <!--                                                                      -->
+  <!-- MACRO FOR SENSORS  -->
+  <!--                                                                      -->
+
+	<!-- Camera macro -->
+	<xacro:macro name="x3_camera" params="namespace parent_link suffix *origin">
+    <xacro:camera_macro_custom
+      namespace="${namespace}"
+      suffix=""
+      parent_link="${parent_link}"
+      vertical_fov="115"
+      width="1920"
+      height="1080"
+      noise="0.007"
+      >
+      <xacro:insert_block name="origin" />
+    </xacro:camera_macro_custom>
+	</xacro:macro>
+
+
+
+	<!-- Pressure macro -->
+  <xacro:macro name="x3_pressure" params="namespace parent_link *origin">
+    <xacro:pressure_plugin_macro_custom
+      namespace="${namespace}"
+      suffix=""
+      parent_link="${parent_link}"
+      topic="pressure"
+      mass="0.00015"
+      update_rate="10"
+      range="30000"
+      noise_sigma="3.0"
+      noise_amplitude="0.0"
+      estimateDepth="false"
+      standardPressure="101.325"
+      kPaPerM="9.80638"
+      >
+      <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001" />
+      <xacro:insert_block name="origin" />
+    </xacro:pressure_plugin_macro_custom>
+  </xacro:macro>
+
+
+
+  <!-- IMU macro -->
+  <xacro:macro name="x3_imu" params="namespace parent_link *origin">
+    <xacro:imu_plugin_macro
+      namespace="${namespace}"
+      imu_suffix=""
+      parent_link="${parent_link}"
+      imu_topic="imu"
+      mass_imu_sensor="0.00015"
+      gyroscope_noise_density="0.0003394"
+      gyroscope_random_walk="0.000038785"
+      gyroscope_bias_correlation_time="1000.0"
+      gyroscope_turn_on_bias_sigma="0.0087"
+      accelerometer_noise_density="0.004"
+      accelerometer_random_walk="0.006"
+      accelerometer_bias_correlation_time="300.0"
+      accelerometer_turn_on_bias_sigma="0.1960"
+      orientation_noise="0.01"
+      enable_local_ned_frame="false"
+      reference_frame="world"
+      update_rate="100"
+      >
+      <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001" />
+			<xacro:insert_block name="origin" />
+    </xacro:imu_plugin_macro>
+	</xacro:macro>
+
+
+
+  <!-- Magnetometer macro -->
+  <xacro:macro name="x3_magnetometer" params="namespace parent_link *origin">
+    <xacro:magnetometer_plugin_macro_custom
+      namespace="${namespace}"
+      suffix=""
+      parent_link="${parent_link}"
+      topic="magnetometer"
+      mass="0.00015"
+      update_rate="50"
+      mag_intensity="65.0"
+      noise_xy="1.0"
+      noise_z="1.4"
+      noise_amplitude="0"
+      turn_on_bias="2.0"
+      >
+      <inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001" />
+      <xacro:insert_block name="origin" />
+    </xacro:magnetometer_plugin_macro_custom>
+  </xacro:macro>
+
+
+
+
+  <!--                                                                      -->
+  <!-- MACRO DEFINITIONS FOR EACH SENSOR. DO NOT TWEAK UNLESS NECESSARY  -->
+  <!--                                                                      -->
+
+
+	<!-- Macro to add camera. Use x3_camera to create instance -->
+	<xacro:macro name="camera_macro_custom" 
+    params="namespace parent_link suffix 
+      vertical_fov  width height noise
+      *origin">
+		<link name="${namespace}/camera${suffix}_link">
+			<xacro:box_inertial 
+				mass="1e-4"
+				x="1e-4"
+				y="1e-4"
+				z="1e-4"
+			>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			</xacro:box_inertial>
+
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+				  <box size="1e-4 1e-4 1e-4"/>
+				</geometry>
+			</visual>
+
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+				  <box size="1e-4 1e-4 1e-4"/>
+				</geometry>
+			</collision>
+		</link>
+
+    <!-- joint allows for camera tilting -->
+		<joint name="${namespace}/camera${suffix}_joint" type="revolute">
+			<parent link="${parent_link}"/>
+			<child link="${namespace}/camera${suffix}_link"/>
+
+			<xacro:insert_block name="origin" />
+			<axis xyz="0 1 0"/>
+			<limit effort="1e-12" lower="${-pi/6}" upper="${pi/6}" velocity="0.5"/>
+		</joint>
+
+    <!-- transmission for camera tilting -->
+		<transmission name="${namespace}/camera${suffix}/trans">
+			<type>transmission_interface/SimpleTransmission</type>
+			<joint name="${namespace}/camera${suffix}_joint">
+				<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+			</joint>
+			<actuator name="${namespace}/camera${suffix}/motor">
+				<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+				<mechanicalReduction>1</mechanicalReduction>
+			</actuator>
+		</transmission>
+
+    <!-- gazebo parameters -->
+		<gazebo reference="${namespace}/camera${suffix}_link">
+			<sensor type="camera" name="camera${suffix}_link">
+				<update_rate>30</update_rate>
+				<camera name="camera${suffix}_link">
+				<vertical_fov>${vertical_fov}</vertical_fov>
+				<image>
+					<width>${width}</width>
+					<height>${height}</height>
+					<format>R8G8B8</format>
+				</image>
+				<clip>
+					<near>0.05</near>
+					<far>300</far>
+				</clip>
+				<noise>
+					<type>gaussian</type>
+					<mean>0.0</mean>
+					<stddev>${noise}</stddev>
+				</noise>
+				</camera>
+				<plugin name="camera${suffix}_controller" filename="libgazebo_ros_camera.so">
+				<updateRate>30</updateRate>
+
+				<cameraName>cam</cameraName>
+				<frameName>${namespace}/camera${suffix}_link</frameName>
+				<imageTopicName>image_raw</imageTopicName>
+				<cameraInfoTopicName>camera_info</cameraInfoTopicName>
+
+				<hackBaseline>0.7</hackBaseline>
+
+				<distortionK1>0.0</distortionK1>
+				<distortionK2>0.0</distortionK2>
+				<distortionK3>0.0</distortionK3>
+				<distortionT1>0.0</distortionT1>
+				<distortionT2>0.0</distortionT2>
+
+				<attenuationR>0.0</attenuationR>
+				<attenuationG>0.0</attenuationG>
+				<attenuationB>0.0</attenuationB>
+
+				<backgroundR>0</backgroundR>
+				<backgroundG>0</backgroundG>
+				<backgroundB>0</backgroundB>
+
+				<imageTopicName>image_raw</imageTopicName>
+
+				</plugin>
+			</sensor>
+		</gazebo>
+	</xacro:macro>
+
+
+  <!-- Macro to add a Pressure sensor. Use x3_pressure to create instance -->
+  <xacro:macro name="pressure_plugin_macro_custom"
+    params="namespace suffix parent_link topic mass update_rate
+      range noise_sigma noise_amplitude estimateDepth standardPressure kPaPerM
+      *inertia *origin">
+
+    <link name="${namespace}/pressure${suffix}_link">
+      <inertial>
+        <xacro:insert_block name="inertia" />
+        <mass value="${mass}" />  <!-- [kg] -->
+        <origin xyz="0 0 0" rpy="0 0 0" />
+      </inertial>
+      <visual>
+        <geometry>
+          <mesh filename="file://$(find uuv_sensor_ros_plugins)/meshes/pressure.dae" scale="0.1 0.1 0.1"/>
+        </geometry>
+      </visual>
+      <xacro:no_collision/>
+    </link>
+
+    <joint name="${namespace}/pressure${suffix}_joint" type="revolute">
+      <xacro:insert_block name="origin" />
+      <parent link="${parent_link}" />
+      <child link="${namespace}/pressure${suffix}_link" />
+      <limit upper="0" lower="0" effort="0" velocity="0" />
+      <axis xyz="1 0 0"/>
+    </joint>
+
+    <gazebo>
+      <plugin filename="libuuv_gazebo_ros_subsea_pressure_plugin.so" name="libuuv_gazebo_subseapressure${suffix}_plugin">
+        <robot_namespace>${namespace}</robot_namespace> <!-- (string, required): ros namespace in which the messages are published -->
+        <link_name>${namespace}/pressure${suffix}_link</link_name> <!-- (string, required): name of the body which holds the IMU sensor -->
+        <sensor_topic>${topic}</sensor_topic> <!-- (string): name of the sensor output topic and prefix of service names (defaults to imu) -->
+        <update_rate>${update_rate}</update_rate> <!-- Update period of accelerometer and gyroscope [s] -->
+
+        <saturation>${range}</saturation> <!-- measurement range [kPa] -->
+        <noise_sigma>${noise_sigma}</noise_sigma> <!-- measurement stddev [kPa] -->
+        <noise_amplitude>${noise_amplitude}</noise_amplitude>
+        <estimate_depth_on>${estimateDepth}</estimate_depth_on> <!-- infer depth? -->
+        <standard_pressure>${standardPressure}</standard_pressure> <!-- pressure at sea level (depth 0 m) [kPa] -->
+        <kPa_per_meter>${kPaPerM}</kPa_per_meter> <!-- increase in pressure [kPa] per [m] in increased depth -->
+        <enable_gazebo_messages>false</enable_gazebo_messages>
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+
+
+
+
+
+
+  <!-- Macro to add a Magnetometer. Use x3_magnetometer to create instance -->
+  <xacro:macro name="magnetometer_plugin_macro_custom"
+    params="namespace suffix parent_link topic mass update_rate
+      mag_intensity noise_xy noise_z turn_on_bias noise_amplitude
+      *inertia *origin">
+    <!-- Sensor link -->
+    <link name="${namespace}/magnetometer${suffix}_link">
+      <inertial>
+        <xacro:insert_block name="inertia" />
+        <mass value="${mass}" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+      </inertial>
+      <xacro:no_collision/>
+    </link>
+
+    <!-- Sensor joint -->
+    <joint name="${namespace}/magnetometer${suffix}_joint" type="revolute">
+      <xacro:insert_block name="origin" />
+      <parent link="${parent_link}" />
+      <child link="${namespace}/magnetometer${suffix}_link" />
+      <limit upper="0" lower="0" effort="0" velocity="0" />
+      <axis xyz="1 0 0"/>
+    </joint>
+
+    <gazebo>
+      <plugin filename="libuuv_gazebo_ros_magnetometer_plugin.so" name="libuuv_gazebo_ros_magnetometer_${suffix}_plugin">
+        <robot_namespace>${namespace}</robot_namespace> <!-- (string, required): ros namespace in which the messages are published -->
+        <link_name>${namespace}/magnetometer${suffix}_link</link_name> <!-- (string, required): name of the body which holds the IMU sensor -->
+        <sensor_topic>${topic}</sensor_topic> <!-- (string): name of the sensor output topic and prefix of service names (defaults to imu) -->
+        <update_rate>${update_rate}</update_rate> <!-- Update period of accelerometer and gyroscope [s] -->
+
+        <intensity>${mag_intensity}</intensity> <!-- magnitude of magnetic field [muT] -->
+        <reference_heading>${pi}</reference_heading> <!-- reference heading [rad] -->
+        <declination>0.0</declination> <!-- reference declination [rad] -->
+        <inclination>${pi*60/180}</inclination> <!-- refernce inclination [rad] -->
+        <noise_xy>${noise_xy}</noise_xy> <!-- Discrete-time std. dev. of output noise in xy-axis [muT] -->
+        <noise_z>${noise_z}</noise_z> <!-- Discrete-time std. dev. of output noise in z-axis [muT] -->
+        <turn_on_bias>${turn_on_bias}</turn_on_bias> <!-- Std. dev. of turn-on-bias [muT] -->
+        <noise_amplitude>${noise_amplitude}</noise_amplitude>
+        <enable_gazebo_messages>false</enable_gazebo_messages>
+        <enable_local_ned_frame>false</enable_local_ned_frame>
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+
+</robot>

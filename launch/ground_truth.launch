@@ -1,5 +1,5 @@
 <launch>
-  <arg name="uuv_name" default="x3_rov"/>
+  <arg name="uuv_name" default="x3"/>
 
   <!-- ROV initial position -->
   <arg name="x" default="2"/>
@@ -9,9 +9,9 @@
   <arg name="pitch" default="0"/>
   <arg name="yaw" default="0"/>
 
-  <node pkg="x3_sim" 
-    type="x3_publish_model_state.py" 
-    name="x3_model_state"
+  <node pkg="x3_description" 
+    type="publish_model_state.py" 
+    name="model_state"
     output="screen">
     <rosparam subst_value="true">
       x: $(arg x)
@@ -26,7 +26,7 @@
   <!-- Trajectory ground truth -->
   <node pkg="hector_trajectory_server" type="hector_trajectory_server" name="trajectory_server_x3_sim" output="screen" ns="ground_truth" >
       <param name="/target_frame_name" value="/world" />
-      <param name="/source_frame_name" value="/x3_rov" />
+      <param name="/source_frame_name" value="/x3" />
       <param name="/trajectory_update_rate" value="20.0" />
       <param name="/trajectory_publish_rate" value="20.0" />
   </node>

@@ -159,7 +159,7 @@ def broadcast_pose(pose: Pose):
     br.sendTransform((position.x, position.y, position.z),
                      (orientation.x, orientation.y, orientation.z, orientation.w),
                      rospy.Time.now(), 
-                     "x3_rov", 
+                     "x3", 
                      "world")
 
 if __name__ == '__main__':
@@ -172,7 +172,7 @@ if __name__ == '__main__':
     get_model_srv = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
 
     model = GetModelStateRequest()
-    model.model_name='x3_rov'
+    model.model_name='x3'
 
     init_pose = get_initial_pose()
     T_wi = get_initial_frame()

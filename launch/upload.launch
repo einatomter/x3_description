@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="debug" default="false"/>
+  <arg name="verbose" default="false"/>
+
+
+  <!-- Vehicle's initial pose -->
+  <arg name="x"     default="0"/>
+  <arg name="y"     default="0"/>
+  <arg name="z"     default="-20"/>
+  <arg name="roll"  default="0"/>
+  <arg name="pitch" default="0"/>
+  <arg name="yaw"   default="0"/>
+
+
+  <arg name="namespace" default="x3"/>
+  <arg name="mode" default="default"/>
+  <arg name="world_frame" default="world"/>
+
+  <!-- Use UUV publish state and tf -->
+  <arg name="publish_tf" default="false"/>
+
+  <group ns="$(arg namespace)">
+    <param name="/$(arg namespace)/robot_description"
+          command="$(find xacro)/xacro '$(find x3_description)/robots/$(arg mode).xacro'
+                  debug:=$(arg debug)
+                  namespace:=$(arg namespace)
+                  inertial_reference_frame:=$(arg world_frame)" />
+
+    <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
+    <node name="urdf_spawner" 
+      pkg="uuv_descriptions" 
+      type="spawn_model"
+      respawn="false" 
+      output="screen"
+      args="-urdf -x $(arg x) -y $(arg y) -z $(arg z)
+            -R $(arg roll) -P $(arg pitch) -Y $(arg yaw)
+            -model $(arg namespace) -param /$(arg namespace)/robot_description">
+    </node>
+
+    <!-- Controller for joints not included within uuv joint state publisher -->
+    <include file="$(find x3_description)/launch/joint_state_controller.launch"/>
+
+    <!-- Publish robot model for ROS -->
+    <node name="robot_state_publisher"
+          pkg="robot_state_publisher" 
+          type="robot_state_publisher" 
+          respawn="true" 
+          output="screen">
+      <param name="robot_description" value="/$(arg namespace)/robot_description" />
+    </node>
+  </group>
+
+
+  <!-- Publish state and tf for in relation to the world frame -->
+  <include if="$(arg publish_tf)" file="$(find uuv_assistants)/launch/message_to_tf.launch">
+    	<arg name="namespace" value="$(arg namespace)"/>
+  </include>
+
+</launch>

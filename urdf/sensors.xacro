@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Camera -->
+  <xacro:x3_camera namespace="${namespace}" parent_link="${namespace}/base_link" suffix="">
+    <origin xyz="${x3_length*48/100} 0 ${x3_height*26/100}" rpy="0 0 0"/>
+  </xacro:x3_camera>
+
+  <!-- Pressure  -->
+  <xacro:x3_pressure namespace="${namespace}" parent_link="${namespace}/base_link">
+  	<!-- <origin xyz="${x3_length*48/100} 0 ${x3_height*26/100}" rpy="0 0 0"/> -->
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </xacro:x3_pressure>
+
+  <!-- IMU  -->
+  <xacro:x3_imu namespace="${namespace}" parent_link="${namespace}/base_link">
+    <origin xyz="${x3_length*48/100} 0 ${x3_height*26/100}" rpy="0 0 0"/>
+  </xacro:x3_imu>
+
+	<!-- magnetometer -->
+	<xacro:x3_magnetometer namespace="${namespace}" parent_link="${namespace}/base_link">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+	</xacro:x3_magnetometer>
+
+</robot>

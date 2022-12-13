@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- Center of buoyancy -->
+    <xacro:property name="x3_cob" value="0 0 0.1"/>
+
+    <!-- Vehicle's actual volume (Gazebo cannot compute the volume out of the mesh) -->
+    <xacro:property name="x3_volume" value="0.008758864"/>
+
+    <!-- Describing the dimensions of the vehicle's bounding box -->
+    <xacro:property name="x3_length" value="0.485"/>
+    <xacro:property name="x3_width"  value="0.257"/>
+    <xacro:property name="x3_height" value="0.354"/>
+
+    <xacro:macro name="x3_hydro_model" params="namespace">
+      <!-- List of hydrodynamic models this robot's links -->
+      <link name="${namespace}/base_link">
+        <neutrally_buoyant>0</neutrally_buoyant>
+
+        <!-- Link's volume -->
+        <volume>${x3_volume}</volume>
+
+        <!-- Link's bounding box, it is used to recalculate the immersed
+        volume when close to the surface.
+        This is a workaround the invalid bounding box given by Gazebo-->
+        <box>
+          <width>${x3_width}</width>
+          <length>${x3_length}</length>
+          <height>${x3_height}</height>
+        </box>
+
+        <!-- Center of buoyancy -->
+        <center_of_buoyancy>${x3_cob}</center_of_buoyancy>
+
+        <!-- Fossen's equation of motion -->
+        <hydrodynamic_model>
+          <type>fossen</type>
+          <added_mass>
+              6  0 0 0 0 0
+              0 20 0 0 0 0
+              0  0 8 0 0 0
+              0  0 0 2 0 0
+              0  0 0 0 1 0
+              0  0 0 0 0 2
+          </added_mass>
+
+          <linear_damping>
+             -25 -30 -28 -10 -5 -10
+          </linear_damping>
+        </hydrodynamic_model>
+      </link>
+    </xacro:macro>
+
+</robot>
