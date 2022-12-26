@@ -20,11 +20,12 @@
     <!-- <arg name="urdf_file" default="x3_v2.xacro"/> -->
     <!-- <arg name="rqt_file" default="default.perspective"/> -->
     <arg name="include_rviz" default="false"/>
+    <arg name="publish_ground_truth" default="true"/>
 
     <!-- ROV initial position -->
-    <arg name="x" default="-20"/>
-    <arg name="y" default="-2"/>
-    <arg name="z" default="-56"/>
+    <arg name="x" default="0"/>
+    <arg name="y" default="0"/>
+    <arg name="z" default="0"/>
     <arg name="yaw" default="0"/>
 
     <!-- Load world -->
@@ -41,7 +42,7 @@
     </include>
 
     <!-- Publish model state (ground truth) -->
-    <include file="$(find x3_description)/launch/ground_truth.launch">
+    <include if="$(arg publish_ground_truth)" file="$(find x3_description)/launch/ground_truth.launch">
         <arg name="uuv_name" value="x3"/>
         <arg name="x" value="$(arg x)"/>
         <arg name="y" value="$(arg y)"/>
@@ -59,10 +60,10 @@
     </node>
 
     <!-- Rviz -->
-    <!-- <include if="$(arg include_rviz)" file="$(find x3_description)/launch/rviz.launch">
+    <include if="$(arg include_rviz)" file="$(find x3_description)/launch/rviz.launch">
         <arg name="only_rviz" value="false"/>
         <arg name="rviz_conf" value="camera.rviz"/>
         <arg name="urdf_file" value="$(arg urdf_file)"/>
-    </include> -->
+    </include>
 
 </launch>

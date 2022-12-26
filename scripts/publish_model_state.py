@@ -13,11 +13,13 @@ from gazebo_msgs.srv import GetModelState, GetModelStateRequest
 
 # TODO: make class
 
-# camera frame
+# body frame
 T_wc = np.array([[ 1,  0, 0, 0.2328 ],
                  [ 0,  1, 0, 0      ],
                  [ 0,  0, 1, 0.09204],
                  [ 0,  0, 0, 1      ]])
+
+# camera frame
 # T_wc = np.array([[ 0,  0, 1, 0.2328 ],
 #                  [-1,  0, 0, 0      ],
 #                  [ 0, -1, 0, 0.09204],
@@ -162,6 +164,7 @@ def broadcast_pose(pose: Pose):
                      "x3", 
                      "world")
 
+
 if __name__ == '__main__':
 
     node_name = os.path.splitext(os.path.basename(__file__))[0]
@@ -174,17 +177,27 @@ if __name__ == '__main__':
     model = GetModelStateRequest()
     model.model_name='x3'
 
+    # publish raw pose
+    pose_publisher = rospy.Publisher('/x3/pose_raw', Pose, queue_size=1)
+
     init_pose = get_initial_pose()
     T_wi = get_initial_frame()
 
-    r = rospy.Rate(20)
+    r = rospy.Rate(40)
 
     while not rospy.is_shutdown():
-        # wait for service to publish model state
-        result = get_model_srv(model)
-        # perform calculations and broadcast
-        # rel_pose = relative_pose(init_pose, result.pose)
-        rel_pose = convert_reference_frame(T_wi ,result.pose)
-        broadcast_pose(rel_pose)
+        try:
+            # wait for service to publish model state
+            result = get_model_srv(model)
 
-        r.sleep()
+            # pose
+            pose_publisher.publish(result.pose)
+
+            # trajectory
+            rel_pose = convert_reference_frame(T_wi ,result.pose)
+            broadcast_pose(rel_pose)
+
+            r.sleep()
+        except rospy.ROSTimeMovedBackwardsException:
+            print("Publish_model_state: time moved backwards, ignoring...")
+            pass
