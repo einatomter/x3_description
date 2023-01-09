@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
     <arg name="paused" default="false"/>
-    <arg name="world_name" default="herkules_ship_wreck.launch"/>
+    <arg name="world_name" default="empty_underwater_world.launch"/>
     <!-- 
     World names:
         auv_underwater_world.launch
@@ -25,7 +25,7 @@
     <!-- ROV initial position -->
     <arg name="x" default="0"/>
     <arg name="y" default="0"/>
-    <arg name="z" default="0"/>
+    <arg name="z" default="-15"/>
     <arg name="yaw" default="0"/>
 
     <!-- Load world -->
