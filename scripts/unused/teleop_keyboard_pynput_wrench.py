@@ -8,7 +8,7 @@ import os
 import time
 import sys, termios
 import rospy
-from geometry_msgs.msg import Twist, Vector3
+from geometry_msgs.msg import Wrench, Accel, Vector3
 
 from pynput import keyboard
 
@@ -53,10 +53,10 @@ class x3TeleopKeyboard:
         self.speed = 1                  # 1 = Slow, 2 = Fast
         self.l = Vector3(0, 0, 0)       # Linear Velocity
         self.a = Vector3(0, 0, 0)       # Angular Velocity
-        self.linear_increment = 1      # How much to increment linear velocities by, to avoid jerkyness
-        self.linear_limit = 1          # Linear velocity limit = self.linear_limit * self.speed
-        self.angular_increment = 1
-        self.angular_limit = 1
+        self.linear_increment = 10      # How much to increment linear velocities by, to avoid jerkyness
+        self.linear_limit = 10          # Linear velocity limit = self.linear_limit * self.speed
+        self.angular_increment = 3
+        self.angular_limit = 3
 
         # User Interface
         self.msg = """
@@ -78,8 +78,15 @@ class x3TeleopKeyboard:
     CTRL-C to quit
             """
 
+        # Default message remains as Wrench
+        self._msg_type = 'Wrench'
+        if rospy.has_param('~type'):
+            self._msg_type = rospy.get_param('~type')
+            if self._msg_type not in ['Wrench', 'accel']:
+                raise rospy.ROSException('Teleoperation output must be either '
+                                         'Wrench or accel')
         # Name Publisher topics accordingly
-        self._output_pub = rospy.Publisher('/x3/cmd_vel', Twist, queue_size=1)
+        self._output_pub = rospy.Publisher('/x3/thruster_manager/input', Wrench, queue_size=1)
 
         print(self.msg)
 
@@ -121,7 +128,11 @@ class x3TeleopKeyboard:
         if "2" in current:
             self.speed = 2
 
-        cmd = Twist()
+        # Choose ros message accordingly
+        if self._msg_type == 'Wrench':
+            cmd = Wrench()
+        else:
+            cmd = Accel()
 
         # Linear velocities:
         # Forward
@@ -161,9 +172,9 @@ class x3TeleopKeyboard:
         self.a.y = self._zero_velocity("i", "k", self.a.y)
         self.a.z = self._zero_velocity("q", "e", self.a.z)
 
-        # Store velocity message into Twist format
-        cmd.angular = self.a
-        cmd.linear = self.l
+        # Store velocity message into Wrench format
+        cmd.torque = self.a
+        cmd.force = self.l
 
         # If ctrl+c kill node
         if all(k in current for k in TERMINATE):
@@ -171,9 +182,9 @@ class x3TeleopKeyboard:
             rospy.loginfo('Keyboard Interrupt Pressed')   
             rospy.loginfo('Shutting down [%s] node' % node_name)
 
-            # Set values to 0
-            cmd.angular = Vector3(0, 0, 0)
-            cmd.linear = Vector3(0, 0, 0)
+            # Set Wrenchs to 0
+            cmd.torque = Vector3(0, 0, 0)
+            cmd.force = Vector3(0, 0, 0)
             self._output_pub.publish(cmd)
 
             exit(-1)

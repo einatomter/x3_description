@@ -1,12 +1,17 @@
 <launch>
   <arg name="uuv_name" default="x3_rov"/>
   <arg name="output_topic" default="cmd_vel"/>
-  <!-- The type of message can also be geometry_msgs/Accel -->
-  <arg name="message_type" default="Wrench"/>
 
   <include file="$(find x3_description)/launch/start_thruster_manager.launch">
     <arg name="reset_tam" value="false"/>
   </include>
+
+  <!-- create publish to simulation node -->
+  <node pkg="x3_description" 
+    type="publish_simulation.py" 
+    name="publish_simulation" 	
+    output="screen">
+  </node>  
 
   <!-- create keyboard input node -->
   <node pkg="x3_description" 
