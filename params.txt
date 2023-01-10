@@ -1,0 +1,15 @@
+Camera params:
+
+values based on calibration from NTNU paper by J. Kvalberg 2019
+https://ntnuopen.ntnu.no/ntnu-xmlui/handle/11250/2622900
+
+fx 1354.45761
+fy 1379.97405
+cx 891.06972
+cy 756.19288
+
+k1 -0.2708139
+k2 0.2005247
+p1 0.0208302
+p2 0.0002806
+k3 -0.1013460
