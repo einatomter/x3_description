@@ -1,0 +1,32 @@
+image_width: 1920
+image_height: 1080
+camera_name: x3_camera
+camera_matrix:
+  rows: 3
+  cols: 3
+  data: [1354.45761, 0, 891.06972, 0, 1379.97405, 756.19288, 0, 0, 1]
+distortion_model: plumb_bob
+distortion_coefficients:
+  rows: 1
+  cols: 5
+  data: [-0.2708139, 0.2005247, -0.00197, 0.00071, 0]
+rectification_matrix:
+  rows: 3
+  cols: 3
+  data: [1, 0, 0, 0, 1, 0, 0, 0, 1]
+projection_matrix:
+  rows: 3
+  cols: 4
+  data: [4827.94, 0, 1223.5, 0, 0, 4835.62, 1024.5, 0, 0, 0, 1, 0]
+
+
+# fx 1354.45761
+# fy 1379.97405
+# cx 891.06972
+# cy 756.19288
+
+# k1 -0.2708139
+# k2 0.2005247
+# p1 0.0208302
+# p2 0.0002806
+# k3 -0.1013460

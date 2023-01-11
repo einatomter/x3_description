@@ -4,8 +4,10 @@
    <include file="$(find video_stream_opencv)/launch/camera.launch" >
         <!-- node name and ros graph name -->
         <arg name="camera_name" value="webcam" />
-        <!-- means video device 0, /dev/video0 -->
+        <!-- use webcam -->
         <arg name="video_stream_provider" value="0" />
+        <!-- use blueye X3 rtsp -->
+        <!-- <arg name="video_stream_provider" value="rtsp://192.168.1.101:8554/test" /> -->
         <!-- set camera fps to (if the device allows) -->
         <arg name="set_camera_fps" value="30"/>
         <!-- set buffer queue size of frame capturing to -->
