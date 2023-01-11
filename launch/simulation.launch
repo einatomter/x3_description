@@ -23,9 +23,9 @@
     <arg name="publish_ground_truth" default="true"/>
 
     <!-- ROV initial position -->
-    <arg name="x" default="0"/>
-    <arg name="y" default="0"/>
-    <arg name="z" default="-15"/>
+    <arg name="x" default="-10"/>
+    <arg name="y" default="-2"/>
+    <arg name="z" default="-17"/>
     <arg name="yaw" default="0"/>
 
     <!-- Load world -->
