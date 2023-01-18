@@ -8,8 +8,8 @@
 
   <!-- create publish to simulation node -->
   <node pkg="x3_description" 
-    type="publish_simulation.py" 
-    name="publish_simulation" 	
+    type="publish_cmd_simulation.py" 
+    name="publish_cmd_simulation" 	
     output="screen">
   </node>  
 
