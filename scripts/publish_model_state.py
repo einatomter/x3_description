@@ -25,61 +25,6 @@ T_wc = np.array([[ 1,  0, 0, 0.2328 ],
 #                  [ 0, -1, 0, 0.09204],
 #                  [ 0,  0, 0, 1      ]])
 
-def get_initial_pose():
-    '''
-    Get initial pose from simulation start
-    '''
-
-    initial_pose = Pose()
-
-    # translation
-    initial_pose.position.x = rospy.get_param('~x')
-    initial_pose.position.y = rospy.get_param('~y')
-    initial_pose.position.z = rospy.get_param('~z')
-
-    # orientation
-    roll = rospy.get_param('~roll')
-    pitch = rospy.get_param('~pitch')
-    yaw = rospy.get_param('~yaw')
-
-    # convert to quaternion
-    q = quaternion_from_euler(roll, pitch, yaw)
-
-    initial_pose.orientation.x = q[0]
-    initial_pose.orientation.y = q[1]
-    initial_pose.orientation.z = q[2]
-    initial_pose.orientation.w = q[3]
-
-    # print(f'Initial pose: {initial_pose}')
-
-    return initial_pose
-
-
-def relative_pose(pose_i: Pose, pose_c: Pose):
-    '''
-    Calculate pose relative to starting pose.
-    TODO: Add camera offset and boolean to switch between camera frame and body frame
-    '''
-
-    new_pose = Pose()
-
-    # calculate new translation
-    new_pose.position.x = pose_c.position.x - pose_i.position.x
-    new_pose.position.y = pose_c.position.y - pose_i.position.y
-    new_pose.position.z = pose_c.position.z - pose_i.position.z
-
-    # fetch orientation
-    q_i = [pose_i.orientation.x, pose_i.orientation.y, pose_i.orientation.z, pose_i.orientation.w]
-    q_c = [pose_c.orientation.x, pose_c.orientation.y, pose_c.orientation.z, pose_c.orientation.w]
-
-    # calculate new orientation
-    q_new = quaternion_multiply(q_c, q_i)
-    new_pose.orientation.x = q_new[0]
-    new_pose.orientation.y = q_new[1]
-    new_pose.orientation.z = q_new[2]
-    new_pose.orientation.w = q_new[3]
-
-    return new_pose
 
 def get_initial_frame():
     '''
@@ -96,7 +41,7 @@ def get_initial_frame():
     # orientation
     roll = rospy.get_param('~roll')
     pitch = rospy.get_param('~pitch')
-    yaw = rospy.get_param('~yaw')
+    yaw = rospy.get_param('~yaw') # - np.pi/2
 
     # convert to quaternion then to rotation matrix
     q_wi = quaternion_from_euler(roll, pitch, yaw)
@@ -180,7 +125,6 @@ if __name__ == '__main__':
     # publish raw pose
     pose_publisher = rospy.Publisher('/x3/pose_raw', Pose, queue_size=1)
 
-    init_pose = get_initial_pose()
     T_wi = get_initial_frame()
 
     r = rospy.Rate(40)

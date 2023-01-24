@@ -3,19 +3,19 @@
    <!-- NOTE: Requires video_stream_opencv installed -->
    <include file="$(find video_stream_opencv)/launch/camera.launch" >
         <!-- node name and ros graph name -->
-        <arg name="camera_name" value="webcam" />
+        <arg name="camera_name" value="cam" />
         <!-- use webcam -->
-        <arg name="video_stream_provider" value="0" />
+        <!-- <arg name="video_stream_provider" value="0" /> -->
         <!-- use blueye X3 rtsp -->
-        <!-- <arg name="video_stream_provider" value="rtsp://192.168.1.101:8554/test" /> -->
+        <arg name="video_stream_provider" value="rtsp://192.168.1.101:8554/test" />
         <!-- set camera fps to (if the device allows) -->
         <arg name="set_camera_fps" value="30"/>
         <!-- set buffer queue size of frame capturing to -->
-        <arg name="buffer_queue_size" value="100" />
+        <arg name="buffer_queue_size" value="1" />
         <!-- throttling the publishing of frames to -->
         <arg name="fps" value="30" />
         <!-- setting frame_id -->
-        <arg name="frame_id" value="webcam" />
+        <arg name="frame_id" value="cam" />
         <!-- camera info loading, take care as it needs the "file:///" at the start , e.g.:
         "file:///$(find your_camera_package)/config/your_camera.yaml" -->
         <arg name="camera_info_url" value="" />
@@ -24,8 +24,8 @@
         <!-- flip the image vertically -->
         <arg name="flip_vertical" value="false" />
         <!-- force a width and height, 0 means no forcing -->
-        <arg name="width" value="640"/>
-        <arg name="height" value="480"/>
+        <arg name="width" value="0"/>
+        <arg name="height" value="0"/>
         <!-- visualize on an image_view window the stream generated -->
         <arg name="visualize" value="true" />
    </include>

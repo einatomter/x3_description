@@ -1,0 +1,29 @@
+<launch>
+  <arg name="uuv_name" default="x3_rov"/>
+  <arg name="output_topic" default="cmd_vel"/>
+
+  <!-- create publish to x3 node -->
+  <node pkg="x3_description" 
+    type="publish_irl.py" 
+    name="publish_irl" 	
+    output="screen">
+  </node>  
+
+  <!-- create keyboard input node -->
+  <node pkg="x3_description" 
+    type="teleop_keyboard_pynput.py" 
+    name="teleop_keyboard" 	
+    output="screen">
+    <!-- <remap from="output" to="/$(arg uuv_name)/$(arg output_topic)"/>
+    <rosparam subst_value="true">
+      type: $(arg message_type)
+    </rosparam> -->
+  </node>
+
+
+  <!-- <node pkg="x3_description" 
+    type="camera_control.py" 
+    name="camera_control" 	
+    output="screen">
+  </node> -->
+</launch>
