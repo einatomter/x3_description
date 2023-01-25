@@ -43,7 +43,7 @@ def publish_callback(event):
 
         imu_out.angular_velocity_covariance = imu_queue[0].angular_velocity_covariance
 
-        # linear acceleartion
+        # linear acceleration
         imu_out.linear_acceleration.x = imu_queue[0].linear_acceleration.x
         imu_out.linear_acceleration.y = imu_queue[0].linear_acceleration.y
         imu_out.linear_acceleration.z = imu_queue[0].linear_acceleration.z
