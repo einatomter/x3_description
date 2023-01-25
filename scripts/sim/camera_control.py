@@ -4,7 +4,7 @@ import os
 
 import rospy
 import numpy as np
-from geometry_msgs.msg import Wrench, Vector3
+from geometry_msgs.msg import Twist, Vector3
 
 from std_msgs.msg import Float64
 
@@ -17,7 +17,7 @@ class x3Camera:
         # publish to camera joint
         self.cameraJoint = rospy.Publisher(f"/{namespace}/camera/controller/command", Float64, queue_size=1)
         # subscribe to cmd_vel topic
-        self.cmd_vel_Sub = rospy.Subscriber(f"/x3/thruster_manager/input", Wrench, self._callback)
+        self.cmd_vel_Sub = rospy.Subscriber(f"/x3/cmd_vel", Twist, self._callback)
 
         # Ros Spin
         rate = rospy.Rate(10) # Hz
@@ -33,16 +33,16 @@ class x3Camera:
             self.angleDeg = self.limitDeg * direction
         # convert to radian
         msg.data = self.angleDeg * np.pi/180
-        print(msg.data)
+        # print(msg.data)
         self.cameraJoint.publish(msg)
 
-    def _callback(self, cmd: Wrench):
+    def _callback(self, cmd: Twist):
         # tilt down
-        if cmd.torque.y > 0:
-            self._updateAngle(cmd.torque.y, -1)
+        if cmd.angular.y > 0:
+            self._updateAngle(cmd.angular.y, -1)
         # tilt up
-        elif cmd.torque.y < 0:
-            self._updateAngle(cmd.torque.y, 1)
+        elif cmd.angular.y < 0:
+            self._updateAngle(cmd.angular.y, 1)
 
 if __name__ == '__main__':
     # Start the node
