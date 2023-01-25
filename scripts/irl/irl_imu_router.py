@@ -9,9 +9,14 @@ server.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 
 
 def callback(data):
-    packed = struct.pack("9d", data.accelerometer.x, data.accelerometer.y, data.accelerometer.z,
+    # timestamp
+    time = rospy.Time.now()
+    # TODO: check if ImuData has timestamp
+
+    packed = struct.pack("6d2i",
+                         data.accelerometer.x, data.accelerometer.y, data.accelerometer.z,
                          data.gyro.x, data.gyro.y, data.gyro.z,
-                         data.compass.x, data.compass.y, data.compass.z)
+                         time.secs, time.nsecs)
     server.sendto(packed, ('192.168.1.255', 5678))
 
     

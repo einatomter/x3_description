@@ -22,12 +22,14 @@ output_pub = rospy.Publisher('/irl/imu', Imu, queue_size=1)
 
 while True:
     data, server = s.recvfrom(1024)
-    data_raw = struct.unpack("6d", data)
+    data_raw = struct.unpack("6d2i", data)
 
     imu_out = Imu()
     # header
     imu_out.header.frame_id = 'imu0'
-    imu_out.header.stamp = rospy.Time.now()
+    # imu_out.header.stamp = rospy.Time.now()
+    imu_out.header.stamp.secs = data_raw[6]
+    imu_out.header.stamp.nsecs = data_raw[7]
 
     # orientation
     imu_out.orientation.w = 0
