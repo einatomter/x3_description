@@ -26,7 +26,8 @@ def publish_callback(event):
 
         # header
         imu_out.header.frame_id = imu_queue[0].header.frame_id
-        imu_out.header.stamp = rospy.Time.now()
+        imu_out.header.stamp = rospy.get_rostime()
+
 
         # orientation
         imu_out.orientation.w = imu_queue[0].orientation.w
