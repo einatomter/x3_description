@@ -14,16 +14,16 @@ from gazebo_msgs.srv import GetModelState, GetModelStateRequest
 # TODO: make class
 
 # body frame
-T_wc = np.array([[ 1,  0, 0, 0.2328 ],
-                 [ 0,  1, 0, 0      ],
-                 [ 0,  0, 1, 0.09204],
-                 [ 0,  0, 0, 1      ]])
+# T_wc = np.array([[ 1,  0, 0, 0.2328 ],
+#                  [ 0,  1, 0, 0      ],
+#                  [ 0,  0, 1, 0.09204],
+#                  [ 0,  0, 0, 1      ]])
 
 # camera frame
-# T_wc = np.array([[ 0,  0, 1, 0.2328 ],
-#                  [-1,  0, 0, 0      ],
-#                  [ 0, -1, 0, 0.09204],
-#                  [ 0,  0, 0, 1      ]])
+T_wc = np.array([[ 0,  0, 1, 0.2328 ],
+                 [-1,  0, 0, 0      ],
+                 [ 0, -1, 0, 0.09204],
+                 [ 0,  0, 0, 1      ]])
 
 
 def get_initial_frame():
