@@ -27,6 +27,7 @@
     <arg name="y" default="-2"/>
     <arg name="z" default="-56"/>
     <arg name="yaw" default="0"/>
+    <arg name="imu" default="0"/>
 
     <!-- Load world -->
     <include file="$(find uuv_gazebo_worlds)/launch/$(arg world_name)">
@@ -48,6 +49,7 @@
         <arg name="y" value="$(arg y)"/>
         <arg name="z" value="$(arg z)"/>
         <arg name="yaw" value="$(arg yaw)"/>
+        <arg name="imu" value="$(arg imu)"/>
     </include>
 
     <!-- Rqt -->

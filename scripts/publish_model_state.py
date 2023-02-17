@@ -13,19 +13,6 @@ from gazebo_msgs.srv import GetModelState, GetModelStateRequest
 
 # TODO: make class
 
-# body frame
-# T_wc = np.array([[ 1,  0, 0, 0.2328 ],
-#                  [ 0,  1, 0, 0      ],
-#                  [ 0,  0, 1, 0.09204],
-#                  [ 0,  0, 0, 1      ]])
-
-# camera frame
-T_wc = np.array([[ 0,  0, 1, 0.2328 ],
-                 [-1,  0, 0, 0      ],
-                 [ 0, -1, 0, 0.09204],
-                 [ 0,  0, 0, 1      ]])
-
-
 def get_initial_frame():
     '''
     Get initial frame and convert to camera frame
@@ -124,6 +111,28 @@ if __name__ == '__main__':
 
     # publish raw pose
     pose_publisher = rospy.Publisher('/x3/pose_raw', Pose, queue_size=1)
+
+    if (rospy.get_param('~imu')):
+        # body frame
+        T_wc = np.array([[ 1, 0, 0, 0.2328 ],
+                         [ 0, 1, 0, 0      ],
+                         [ 0, 0, 1, 0.09204],
+                         [ 0, 0, 0, 1      ]])
+        
+        # ORB-SLAM starts 90 degrees rotated around z-axis
+        Rotate90 = np.array([[ 0, 1, 0, 0],
+                             [-1, 0, 0, 0],
+                             [ 0, 0, 1, 0],
+                             [ 0, 0, 0, 1]])
+        
+        T_wc = T_wc.dot(Rotate90)
+
+    else:
+        # camera frame
+        T_wc = np.array([[ 0, 0, 1, 0.2328 ],
+                         [-1, 0, 0, 0      ],
+                         [ 0,-1, 0, 0.09204],
+                         [ 0, 0, 0, 1      ]])
 
     T_wi = get_initial_frame()
 

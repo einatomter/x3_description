@@ -8,6 +8,7 @@
   <arg name="roll" default="0"/>
   <arg name="pitch" default="0"/>
   <arg name="yaw" default="0"/>
+  <arg name="imu" default="0"/>
 
   <node pkg="x3_description" 
     type="publish_model_state.py" 
@@ -20,6 +21,7 @@
       roll: $(arg roll)
       pitch: $(arg pitch)
       yaw: $(arg yaw)
+      imu: $(arg imu)
     </rosparam>
   </node>
 
