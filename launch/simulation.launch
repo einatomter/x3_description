@@ -27,7 +27,7 @@
     <arg name="y" default="-2"/>
     <arg name="z" default="-56"/>
     <arg name="roll" default="0"/>
-    <arg name="pitch" default="-1"/>
+    <arg name="pitch" default="0"/>
     <arg name="yaw" default="0"/>
     <arg name="imu" default="0"/>
 
