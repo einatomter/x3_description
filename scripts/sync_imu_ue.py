@@ -7,6 +7,7 @@ from sensor_msgs.msg import Imu
 
 mutex = threading.Lock()
 imu_queue = list()
+offset = 0.05
 
 def subscribe_callback(imu_in: Imu):
 
@@ -27,7 +28,7 @@ def publish_callback(event):
         # header
         imu_out.header.frame_id = imu_queue[0].header.frame_id
         imu_out.header.stamp = rospy.get_rostime()
-
+        imu_out.header.stamp -= rospy.Duration.from_sec(0.05)
 
         # orientation
         imu_out.orientation.w = imu_queue[0].orientation.w
@@ -45,9 +46,9 @@ def publish_callback(event):
         imu_out.angular_velocity_covariance = imu_queue[0].angular_velocity_covariance
 
         # linear acceleration
-        imu_out.linear_acceleration.x = imu_queue[0].linear_acceleration.x
-        imu_out.linear_acceleration.y = imu_queue[0].linear_acceleration.y
-        imu_out.linear_acceleration.z = imu_queue[0].linear_acceleration.z
+        imu_out.linear_acceleration.x = imu_queue[0].linear_acceleration.x #* 10/9.8
+        imu_out.linear_acceleration.y = imu_queue[0].linear_acceleration.y #* 10/9.8
+        imu_out.linear_acceleration.z = imu_queue[0].linear_acceleration.z #* 10/9.8
 
         imu_out.linear_acceleration_covariance = imu_queue[0].linear_acceleration_covariance
 
@@ -73,7 +74,7 @@ if __name__ == '__main__':
     input_sub = rospy.Subscriber('/x3/imu', Imu, subscribe_callback)
 
     # initial delay
-    rospy.sleep(0.5)
+    # rospy.sleep(0.5)
 
     rospy.Timer(rospy.Duration(0.01), publish_callback)
 
