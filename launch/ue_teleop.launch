@@ -1,0 +1,16 @@
+<launch>
+  <arg name="uuv_name" default="x3_rov"/>
+  <arg name="output_topic" default="cmd_vel"/>
+
+  <include file="$(find x3_description)/launch/start_thruster_manager.launch">
+    <arg name="reset_tam" value="false"/>
+  </include>
+
+  <!-- create publish to simulation node -->
+  <node pkg="x3_description" 
+    type="publish_cmd_simulation.py" 
+    name="publish_cmd_simulation" 	
+    output="screen">
+  </node>  
+  
+</launch>

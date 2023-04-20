@@ -1,48 +1,26 @@
 <?xml version="1.0"?>
 <launch>
     <arg name="paused" default="false"/>
-    <arg name="world_name" default="herkules_ship_wreck.launch"/>
-    <!-- <arg name="world_name" default="empty_underwater_world.launch"/> -->
-    <!-- 
-    World names:
-        auv_underwater_world.launch
-        empty_underwater_world.launch
-        herkules_ship_wreck.launch
-            -10 -2 -56 0
-        lake.launch
-        mangalia_manipulation.launch
-        mangalia.launch
-        munkholmen.launch
-        ocean_waves.launch
-            4 4 -93 0
-        rov_bop_panel.launch
-        subsea_bop_panel.launch
-    -->
-    <!-- <arg name="urdf_file" default="x3_v2.xacro"/> -->
-    <!-- <arg name="rqt_file" default="default.perspective"/> -->
-    <arg name="include_rviz" default="false"/>
+    <arg name="world_name" default="empty_underwater_world.launch"/>
     <arg name="publish_ground_truth" default="true"/>
+    <arg name="include_rviz" default="false"/>
+    <arg name="start_teleop" default="true"/>
 
     <!-- ROV initial position -->
-    <!-- <arg name="x" default="0"/>
+    <arg name="x" default="0"/>
     <arg name="y" default="0"/>
     <arg name="z" default="-18"/>
-    <arg name="roll" default="0"/>
-    <arg name="pitch" default="0"/>
-    <arg name="yaw" default="0"/>
-    <arg name="imu" default="0"/> -->
-    <!-- ROV initial position ship wreck -->
-    <arg name="x" default="-12"/>
-    <arg name="y" default="-2"/>
-    <arg name="z" default="-56"/>
     <arg name="roll" default="0"/>
     <arg name="pitch" default="0"/>
     <arg name="yaw" default="0"/>
     <arg name="imu" default="0"/>
 
     <!-- Load world -->
-    <include file="$(find uuv_gazebo_worlds)/launch/$(arg world_name)">
-        <arg name="paused" value="$(arg paused)"/>
+    <include file="$(find x3_description)/launch/$(arg world_name)">
+        <arg name="paused" default="false"/>
+        <arg name="gui" default="false"/>
+        <arg name="headless" default="true"/>
+        <arg name="verbose" default="false"/>
     </include>
 
     <!-- Upload model -->
@@ -81,4 +59,6 @@
         <arg name="urdf_file" value="$(arg urdf_file)"/>
     </include>
 
+    <!-- Teleop -->
+    <include if="$(arg start_teleop)" file="$(find x3_description)/launch/ue_teleop.launch"/>
 </launch>
