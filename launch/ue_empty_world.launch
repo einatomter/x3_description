@@ -5,6 +5,7 @@
     <arg name="publish_ground_truth" default="true"/>
     <arg name="include_rviz" default="false"/>
     <arg name="start_teleop" default="true"/>
+    <arg name="imu" default="1"/>
 
     <!-- ROV initial position -->
     <arg name="x" default="0"/>
@@ -13,7 +14,6 @@
     <arg name="roll" default="0"/>
     <arg name="pitch" default="0"/>
     <arg name="yaw" default="0"/>
-    <arg name="imu" default="0"/>
 
     <!-- Load world -->
     <include file="$(find x3_description)/launch/$(arg world_name)">
