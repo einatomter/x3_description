@@ -280,7 +280,7 @@
 				</noise>
 				</camera>
 				<plugin name="camera${suffix}_controller" filename="libgazebo_ros_camera.so">
-				<updateRate>30</updateRate>
+				<updateRate>20</updateRate>
 
 				<cameraName>cam</cameraName>
 				<frameName>${namespace}/camera${suffix}_link</frameName>
