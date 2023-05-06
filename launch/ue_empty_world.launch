@@ -8,12 +8,12 @@
     <arg name="imu" default="1"/>
 
     <!-- ROV initial position -->
-    <arg name="x" default="0"/>
-    <arg name="y" default="0"/>
-    <arg name="z" default="-18"/>
+    <arg name="x" default="-4"/>
+    <arg name="y" default="-20"/>
+    <arg name="z" default="-20"/>
     <arg name="roll" default="0"/>
     <arg name="pitch" default="0"/>
-    <arg name="yaw" default="0"/>
+    <arg name="yaw" default="1.57"/>
 
     <!-- Load world -->
     <include file="$(find x3_description)/launch/$(arg world_name)">
